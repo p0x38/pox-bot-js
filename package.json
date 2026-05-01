@@ -1,0 +1,25 @@
+{
+  "name": "pox-bot",
+  "version": "1.0.0",
+  "description": "A weird discord bot.",
+  "homepage": "https://github.com/p0x38/poxbot2#readme",
+  "bugs": {
+    "url": "https://github.com/p0x38/poxbot2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p0x38/poxbot2.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^14.26.3",
+    "i18next": "^26.0.8",
+    "i18next-fluent": "^2.0.0"
+  }
+}
