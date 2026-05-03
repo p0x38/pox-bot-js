@@ -1,0 +1,41 @@
+{
+    "i18n-ally.localesPaths": "resources/locales",
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.enabledParsers": ["json"],
+    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.displayLanguage": "ja",
+    "i18n-ally.enabledFrameworks": ["i18next"],
+    "i18n-ally.namespace": true,
+    "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
+    "i18n-ally.extract.autoDetect": true,
+    "i18n-ally.indent": 4,
+    "i18n-ally.tabStyle": "space",
+    "i18n-ally.encoding": "utf-8",
+    "i18n-ally.regex.usageMatch": [
+        "[^\\w\\d](?:t|newT|userT)\\(['\"`](.*?)['\"`]"
+    ],
+    "i18n-ally.defaultNamespace": "common",
+    "i18n-ally.sortKeys": true,
+    "i18n-ally.refactor.templates": [
+        {
+            "source": "js-string",
+            "templates": [
+                "t('{key}')",
+                "t(`{key}`)",
+                "t(\"{key}\")",
+                "t('{key}'{args})",
+                "t(`{key}`{args})",
+                "t(\"{key}\"{args})"
+            ],
+            "include": [
+                "**/*.{ts,js}"
+            ]
+        }
+    ],
+    "i18n-ally.translate.saveAsCandidates": true,
+    "i18n-ally.annotations": true,
+    "i18n-ally.annotationMaxLength": 40,
+    "i18n-ally.extract.keygenStrategy": "slug",
+    "i18n-ally.extract.targetPickingStrategy": "most-similar",
+    "i18n-ally.dirStructure": "dir"
+}

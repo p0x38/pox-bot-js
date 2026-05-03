@@ -1,0 +1,13 @@
+{
+    "help": {
+        "messages": {
+            "command_not_found": "Command '{{name}}' was not found."
+        },
+        "embeds": {
+            "default": {
+                "title": "Bot commands help :3",
+                "description": "Here's a list of all available commands~! :3"
+            }
+        }
+    }
+}

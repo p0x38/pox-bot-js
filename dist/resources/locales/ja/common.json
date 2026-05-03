@@ -1,0 +1,10 @@
+{
+    "commands": {
+        "help": {
+            "messages": {
+                "command_not_found": "Command '{{name}}' was not found."
+            }
+        }
+    },
+    "lang_updated": "言語を{lang}に変更したよ！"
+}
