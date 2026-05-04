@@ -1,5 +1,0 @@
-{
-    "command_failed": "An error raised while executing the command!",
-    "detail_label": "Error details:",
-    "unknown_error": "Unhandled error!"
-}
