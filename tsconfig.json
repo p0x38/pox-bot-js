@@ -17,6 +17,6 @@
         },
         "noUncheckedIndexedAccess": true
     },
-    "include": ["src/**/*", "config.json"],
+    "include": ["src/**/*", "config.json", ".release-it.ts"],
     "exclude": ["node_modules", "dist"]
 }
