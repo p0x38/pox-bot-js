@@ -7,10 +7,18 @@ import { EmotionType } from '@/i18n/context/types';
 
 const name = 'setemotion';
 const description = "Change the bot's emotion for this server.";
+const args = [
+    {
+        name: 'emotion',
+        type: 'string',
+        required: true,
+    },
+] as const;
 
-const setemotion: Command = {
+const setemotion: Command<typeof args> = {
     name: name,
     description: description,
+    args: args,
     data: new SlashCommandBuilder()
         .setName(name)
         .setDescription(description)
@@ -37,20 +45,20 @@ const setemotion: Command = {
 
     execute: async (context: Context, t: TFunction, args: any) => {
         if (!context.guild) {
-            await context.reply({
+            return {
                 content: 'This command can only be used in a server.',
                 ephemeral: true,
-            });
-            return;
+            };
         }
 
         const emotion = args.emotion as EmotionType;
         await db.updateGuildSetting(context.guild.id, { emotion });
 
-        await context.reply({
+        return {
             content: `Bot emotion has been set to **${emotion}**!`,
             ephemeral: true,
-        });
+            emotion: emotion,
+        };
     },
 };
 

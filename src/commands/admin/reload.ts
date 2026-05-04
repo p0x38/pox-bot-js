@@ -7,6 +7,8 @@ import { readdirSync } from 'node:fs';
 import { Command } from '../../types';
 import type { Context } from '@/contexts/Context';
 
+import { clearCache } from '@/i18n/cache';
+
 const name = 'reload';
 const description = 'Reloads commands.';
 
@@ -24,10 +26,8 @@ const reload: Command = {
             switch (target) {
                 case 'lang': {
                     await i18next.reloadResources();
-                    await message.reply(
-                        t('commands:reload.messages.lang_success'),
-                    );
-                    return;
+                    clearCache();
+                    return { key: 'commands-reload-messages-lang-success' };
                 }
 
                 case 'command': {
@@ -39,20 +39,18 @@ const reload: Command = {
                             ? rawCommandName.toLowerCase()
                             : '';
                     if (!commandName) {
-                        await message.reply(
-                            t('commands:reload.messages.missing_command'),
-                        );
-                        return;
+                        return {
+                            key: 'commands-reload-messages-missing-command',
+                        };
                     }
 
                     const command = (message.client as any).commands.get(
                         commandName,
                     );
                     if (!command) {
-                        await message.reply(
-                            `Command called '${commandName} doesn't exist!`,
-                        );
-                        return;
+                        return {
+                            content: `Command called '${commandName} doesn't exist!`,
+                        };
                     }
 
                     const commandPath = path.join(
@@ -69,8 +67,9 @@ const reload: Command = {
                         newCommand,
                     );
 
-                    message.reply(`Reloaded '${commandName}' successfully!`);
-                    return;
+                    return {
+                        content: `Reloaded '${commandName}' successfully!`,
+                    };
                 }
 
                 case 'all': {
@@ -97,21 +96,20 @@ const reload: Command = {
                         );
                     }
 
-                    message.reply(
-                        `Reloaded all ${commandFiles.length} commands!`,
-                    );
-                    return;
+                    return {
+                        content: `Reloaded all ${commandFiles.length} commands!`,
+                    };
                 }
 
                 default:
-                    message.reply(
-                        'Usage: pox!lang, pox!command <command>, pox!all',
-                    );
+                    return {
+                        content:
+                            'Usage: pox!lang, pox!command <command>, pox!all',
+                    };
             }
         } catch (error) {
             logger.error('Reload failed:', error);
-            message.reply('An error occurred while reloading.');
-            return;
+            return { content: 'An error occurred while reloading.' };
         }
     },
 };

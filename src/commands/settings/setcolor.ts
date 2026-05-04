@@ -7,12 +7,13 @@ const setcolor: Command = {
     description: 'Set your profile color.',
     guildOnly: false,
 
-    execute: async (context: Context, t: TFunction) => {
+    execute: async (context: Context) => {
         // TODO: Implement setcolor
-        const msg = t('messages:commands.setcolor.success', {
-            defaultValue: 'Color updated!',
-        });
-        await context.reply(msg);
+        return {
+            key: 'messages-commands-setcolor-success',
+            vars: { defaultValue: 'Color updated!' },
+            emotion: 'joy',
+        };
     },
 };
 

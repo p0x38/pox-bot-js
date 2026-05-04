@@ -42,12 +42,43 @@ profile-embeds-main-description =
        *[default] {$user}の現在の状態だよ〜
     }
 
-messages-lang-updated =
+profile-common-unknown = 不明
+profile-pages-info-title = ユーザー情報
+profile-pages-stats-title = レベル統計
+profile-fields-name = 名前
+profile-fields-id = ID
+profile-fields-created-at = 作成日
+profile-fields-joined-at = 参加日
+profile-fields-roles = ロール
+profile-fields-level = レベル
+profile-fields-rank = ランク
+profile-fields-total-xp = 合計XP
+profile-fields-progress = レベル {$level} への進捗
+profile-buttons-user-info = ユーザー情報
+profile-buttons-level-stats = レベル統計
+profile-messages-not-allowed = コマンドを実行した本人しかページをめくれないよ。
+
+common-errors-invalid-language = その言語はまだサポートされてないよ！
+common-lang-updated =
     { $personality ->
         [silly] 言語を{$lang}に変えたよ！ :3
         [formal] システム言語が正常に{$lang}へ変更されました。
        *[default] 言語を{$lang}に更新しました！
     }
+
+commands-ping-success =
+    { $personality ->
+        [casual] ポン！レイテンシは {$latency}ms だよ。
+        [robotic] レイテンシ確認：{$latency}MS。
+       *[default] ポン！レイテンシは {$latency}ms だよ。
+    }
+
+messages-commands-leaderboard-empty = リーダーボードにまだ誰もいないみたいだよ。
+messages-commands-leaderboard-title = グローバルリーダーボード
+messages-commands-setcolor-success = プロフィールの色を更新したよ！
+
+commands-reload-messages-lang-success = すべての翻訳ファイルを読み込み直したよ！
+commands-reload-messages-missing-command = リロードするコマンド名を指定してね。
 
 messages-levelup =
     { $personality ->

@@ -7,9 +7,11 @@ import {
     AutocompleteInteraction,
     type Message,
     type ChatInputCommandInteraction,
+    EmbedBuilder,
 } from 'discord.js';
 import { TFunction } from '@/i18n/fluent/t';
-import type { ArgumentDefinition, InferArgs } from './types_args';
+import type { ArgumentDefinition, InferArgs } from './args';
+import { EmotionType } from '@/i18n/context/types';
 
 export type RawContext = Message | ChatInputCommandInteraction;
 
@@ -19,6 +21,19 @@ export type SlashCommandData =
     | SlashCommandBuilder
     | SlashCommandOptionsOnlyBuilder
     | SlashCommandSubcommandBuilder;
+
+export type CommandResponse =
+    | {
+          key?: string;
+          vars?: Record<string, any>;
+          content?: string;
+          emotion?: EmotionType;
+          ephemeral?: boolean;
+          embeds?: EmbedBuilder[];
+          components?: any[];
+      }
+    | string
+    | void;
 
 export interface Command<TArgsDef extends readonly ArgumentDefinition[] = []> {
     name: string;
@@ -39,7 +54,7 @@ export interface Command<TArgsDef extends readonly ArgumentDefinition[] = []> {
         ctx: Context,
         t: TFunction,
         args: InferArgs<TArgsDef>,
-    ) => Promise<void>;
+    ) => Promise<CommandResponse>;
 
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 }

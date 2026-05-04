@@ -11,17 +11,17 @@ const command: Command = {
         const topUsers = await db.getTopUsers(10);
 
         if (!topUsers || topUsers.length === 0) {
-            await context.reply({
-                content: t('messages:commands.leaderboard.empty', {
+            return {
+                key: 'messages-commands-leaderboard-empty',
+                vars: {
                     defaultValue: 'No users found on the leaderboard yet!',
-                }),
-            });
-            return;
+                },
+            };
         }
 
         const embed = new EmbedBuilder()
             .setTitle(
-                t('commands:leaderboard.title', {
+                t('messages-commands-leaderboard-title', {
                     defaultValue: 'Global leaderboard',
                 }),
             )
@@ -36,7 +36,7 @@ const command: Command = {
             )
             .setTimestamp();
 
-        await context.reply({ embeds: [embed] });
+        return { embeds: [embed] };
     },
 };
 

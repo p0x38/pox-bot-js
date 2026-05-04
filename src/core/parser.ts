@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { MissingRequiredArgument } from '@/errors/index';
 import { ArgumentDefinition, type InferArgs } from '../types';
-import { CONVERTER_MAP } from '@/converters';
+import { CONVERTER_MAP, getConvertedValue } from '@/converters';
 import { db } from '../databases';
 import i18n from '../i18n';
 import config from '../config.json';
@@ -24,7 +24,7 @@ export class ArgumentParser {
         const result: Record<string, unknown> = {};
 
         for (const def of defs) {
-            let rawValue: unknown;
+            let rawValue: any;
 
             if (ctx.interaction) {
                 const option = ctx.interaction.options.get(def.name);
@@ -39,10 +39,11 @@ export class ArgumentParser {
             }
 
             if (typeof rawValue === 'string') {
-                const converter = CONVERTER_MAP[def.type];
-                result[def.name] = converter
-                    ? await converter.convert(ctx, rawValue)
-                    : rawValue;
+                result[def.name] = await getConvertedValue(
+                    def.type,
+                    ctx,
+                    rawValue,
+                );
             } else {
                 result[def.name] = rawValue;
             }
