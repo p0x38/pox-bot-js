@@ -8,10 +8,18 @@ import type { Context } from '@/contexts/Context';
 
 const name = 'setlang';
 const description = 'Change your display language.';
+const args = [
+    {
+        name: 'language',
+        type: 'string',
+        required: true,
+    },
+] as const;
 
-const setlang: Command = {
+const setlang: Command<typeof args> = {
     name: name,
     description: description,
+    args: args,
     data: new SlashCommandBuilder()
         .setName(name)
         .setDescription(description)
@@ -47,25 +55,23 @@ const setlang: Command = {
         const userId = context.user.id;
 
         if (!languages.includes(lang)) {
-            await context.reply({
-                content: t('common:errors.invalid_language'),
+            return {
+                key: 'common-errors-invalid-language',
                 ephemeral: true,
-            });
-            return;
+            };
         }
 
         await db.updateSetting(userId, { language: lang });
 
         const newT = i18n.getFixedT(lang);
 
-        const successMessage = newT('common:lang_updated', {
-            lang: normalizeLangName(lang),
-        });
-
-        await context.reply({
-            content: successMessage,
+        return {
+            content: newT('common-lang-updated', {
+                lang: normalizeLangName(lang),
+            }),
             ephemeral: true,
-        });
+            emotion: 'joy',
+        };
     },
 };
 

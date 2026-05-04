@@ -8,15 +8,13 @@ const ping: Command = {
     description: 'Retrieves bot latency.',
     guildOnly: false,
 
-    execute: async (context: Context, t: TFunction) => {
+    execute: async (context: Context) => {
         const latency = context.client.ws.ping;
-        const msg = t('messages:commands.ping.success', { latency });
-
-        if (context.raw instanceof Message) {
-            await context.reply(msg);
-        } else {
-            await context.reply({ content: msg });
-        }
+        return {
+            key: 'commands-ping-success',
+            vars: { latency },
+            emotion: 'joy',
+        };
     },
 };
 

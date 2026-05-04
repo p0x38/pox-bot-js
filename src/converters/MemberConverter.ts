@@ -1,11 +1,37 @@
 import type { Context } from '@/contexts/Context';
+import { BaseConverter, ConversionError } from './BaseConverter';
+import { GuildMember } from 'discord.js';
 
-export class MemberConverter {
-    static async convert(ctx: Context, value: string) {
+export class MemberConverter extends BaseConverter<GuildMember> {
+    readonly name = 'Member';
+
+    async convert(ctx: Context, value: string): Promise<GuildMember> {
+        this.validateInput(value);
+
+        if (!ctx.guild) {
+            throw new ConversionError('error-guild-only-command');
+        }
+
         const id = value.replace(/[<@!>]/g, '');
 
-        if (!ctx.guild) return undefined;
+        if (!/^\d+$/.test(id)) {
+            throw new ConversionError('error-invalid-member-format', {
+                input: value,
+            });
+        }
 
-        return ctx.guild.members.fetch(id).catch(() => undefined);
+        try {
+            const member = await ctx.guild.members.fetch(id);
+
+            if (!member) {
+                throw new ConversionError('error-member-not-found', { id });
+            }
+
+            return member;
+        } catch (error) {
+            throw new ConversionError('error-member-not-found', {
+                input: value,
+            });
+        }
     }
 }

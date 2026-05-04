@@ -1,95 +1,187 @@
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ComponentType,
+    EmbedBuilder,
+    GuildMember,
+    SlashCommandBuilder,
+} from 'discord.js';
 import { db } from '@/databases';
-import type { Context } from '@/contexts/Context';
-import type { Command } from '@/types';
-import { localizeCommand } from '@/i18n/translator';
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { Command } from '@/types';
 import { TFunction } from '@/i18n/fluent/t';
+import { Experience } from '@/services/experience.service';
+import type { Context } from '@/contexts/Context';
 
 const name = 'profile';
-const description = 'Show your level and progress.';
+const description = 'Check user profile and level.';
 
-const command: Command = {
+export const profile: Command<any> = {
     name: name,
     description: description,
-    data: localizeCommand(
-        new SlashCommandBuilder()
-            .setName(name)
-            .setDescription(description)
-            .addUserOption((option) =>
-                option
-                    .setName('target')
-                    .setDescription('The user to view')
-                    .setRequired(false),
-            ) as SlashCommandBuilder,
-        'commands.profile',
-    ),
-    execute: async (context: Context, t: TFunction) => {
-        const targetUser =
-            'author' in context.raw
-                ? context.raw.author
-                : context.options?.getUser('target') || context.user;
 
-        const profileData = await db.getUserProfile(targetUser.id);
-        const profile = profileData[0] || {
-            xp: 0,
-            level: 1,
-            xp_to_next: 50,
-            progress_percent: 0,
-            global_rank: '?',
-        };
+    data: new SlashCommandBuilder()
+        .setName(name)
+        .setDescription(description)
+        .addUserOption((opt) =>
+            opt
+                .setName('target')
+                .setDescription('The user to view')
+                .setRequired(false),
+        ) as SlashCommandBuilder,
 
-        const barLength = 10;
-        const filled = Math.round(
-            (barLength * (profile.progress_percent || 0)) / 100,
-        );
-        const progressBar = '#'.repeat(filled) + ' '.repeat(barLength - filled);
+    args: [{ name: 'target', type: 'member', required: false }],
 
-        const xpNeeded = Number(profile.xp_to_next);
+    execute: async (context: Context, t: TFunction, args: any) => {
+        const executor =
+            'author' in context.raw ? context.raw.author : context.user;
+        const executorMember = context.member as GuildMember | null;
 
-        const needXpText = t('commands:profile.messages.need_xp', {
-            count: xpNeeded,
-            amount: xpNeeded.toLocaleString(),
-        });
+        const target =
+            args.target instanceof GuildMember
+                ? args.target
+                : executorMember || null;
 
-        const embed = new EmbedBuilder()
+        if (!target) {
+            return {
+                content: 'Target member not found.',
+                ephemeral: true,
+            };
+        }
+
+        const profileData = (await db.getUserProfile(target.id))[0] as any;
+
+        const roles =
+            target.roles.cache
+                .filter((r: any) => r.id !== target.guild.id)
+                .map((r: any) => r.toString())
+                .join(', ') || 'None';
+
+        const createdAt = `<t:${Math.floor(target.user.createdTimestamp / 1000)}:R>`;
+        const joinedAt = target.joinedTimestamp
+            ? `<t:${Math.floor(target.joinedTimestamp / 1000)}:R>`
+            : t('profile-common-unknown');
+
+        const xp = Number(profileData?.xp || 0);
+        const progress = Experience.getLevelProgress(xp);
+        const progressBar = Experience.getProgressBar(xp, 12);
+
+        const infoEmbed = new EmbedBuilder()
             .setAuthor({
-                name: targetUser.username,
-                iconURL: targetUser.displayAvatarURL(),
+                name: target.user.tag,
+                iconURL: target.displayAvatarURL(),
             })
-            .setTitle(
-                t('commands:profile.embeds.main.title', {
-                    defaultValue: 'User Profile',
-                }),
-            )
+            .setTitle(`👤 ${t('profile-pages-info-title')}`)
+            .setThumbnail(target.displayAvatarURL())
             .setColor(0x5865f2)
             .addFields(
                 {
-                    name: t('commands:profile.embeds.main.fields.level'),
-                    value: `**${profile.level}**`,
+                    name: t('profile-fields-name'),
+                    value: `\`${target.displayName}\``,
                     inline: true,
                 },
                 {
-                    name: t('commands:profile.embeds.main.fields.rank'),
-                    value: `**#${profile.global_rank}**`,
+                    name: t('profile-fields-id'),
+                    value: `\`${target.id}\``,
                     inline: true,
                 },
                 {
-                    name: t('commands:profile.embeds.main.fields.xp'),
-                    value: `\`${Number(profile.xp).toLocaleString()} XP\``,
+                    name: t('profile-fields-created-at'),
+                    value: createdAt,
                     inline: true,
                 },
                 {
-                    name: t('commands:profile.embeds.main.fields.progress', {
-                        level: Number(profile.level) + 1,
-                    }),
-                    value: `${progressBar} **${profile.progress_percent}%**\n(${needXpText})`,
-                    inline: false,
+                    name: t('profile-fields-joined-at'),
+                    value: joinedAt,
+                    inline: true,
                 },
-            )
-            .setTimestamp();
+                { name: t('profile-fields-roles'), value: roles },
+            );
 
-        await context.reply({ embeds: [embed] });
+        const statsEmbed = new EmbedBuilder()
+            .setAuthor({
+                name: target.user.tag,
+                iconURL: target.displayAvatarURL(),
+            })
+            .setTitle(`⭐ ${t('profile-pages-stats-title')}`)
+            .setThumbnail(target.displayAvatarURL())
+            .setColor(0xfee75c)
+            .addFields(
+                {
+                    name: t('profile-fields-level'),
+                    value: `**Lv.${progress.level}**`,
+                    inline: true,
+                },
+                {
+                    name: t('profile-fields-rank'),
+                    value: `**#${profileData?.global_rank || 'N/A'}**`,
+                    inline: true,
+                },
+                {
+                    name: t('profile-fields-total-xp'),
+                    value: `\`${xp.toLocaleString()}\``,
+                    inline: true,
+                },
+                {
+                    name: `${t('profile-fields-progress', { level: progress.level + 1 })}`,
+                    value: `${progressBar}\n\`${progress.progressInLevel.toLocaleString()} / ${progress.neededInLevel.toLocaleString()} XP\``,
+                },
+            );
+
+        const pages = [infoEmbed, statsEmbed];
+        let currentPage = 0;
+
+        const getRow = (page: number) =>
+            new ActionRowBuilder<ButtonBuilder>().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('prev')
+                    .setLabel(t('profile-buttons-user-info'))
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === 0),
+                new ButtonBuilder()
+                    .setCustomId('next')
+                    .setLabel(t('profile-buttons-level-stats'))
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === 1),
+            );
+
+        const response = await context.reply({
+            embeds: [pages[currentPage]!],
+            components: [getRow(currentPage)],
+        });
+
+        if (!response) return;
+
+        const message =
+            'author' in context.raw
+                ? (response as any)
+                : await (context.raw as any).fetchReply();
+
+        const collector = message.createMessageComponentCollector({
+            componentType: ComponentType.Button,
+            time: 60000,
+        });
+
+        collector.on('collect', async (i: any) => {
+            if (i.user.id !== (executor as any).id) {
+                return i.reply({
+                    content: t('profile-messages-not-allowed'),
+                    ephemeral: true,
+                });
+            }
+
+            currentPage = i.customId === 'next' ? 1 : 0;
+
+            await i.update({
+                embeds: [pages[currentPage]],
+                components: [getRow(currentPage)],
+            });
+        });
+
+        collector.on('end', () => {
+            message.edit({ components: [] }).catch(() => null);
+        });
     },
 };
 
-export default command;
+export default profile;

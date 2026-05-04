@@ -7,10 +7,18 @@ import { personalityPresets } from '@/i18n/context/presets';
 
 const name = 'setpersonality';
 const description = "Change the bot's personality for this server.";
+const argsDef = [
+    {
+        name: 'preset',
+        type: 'string',
+        required: true,
+    },
+] as const;
 
-const setpersonality: Command = {
+const setpersonality: Command<typeof argsDef> = {
     name: name,
     description: description,
+    args: argsDef,
     data: new SlashCommandBuilder()
         .setName(name)
         .setDescription(description)
@@ -29,13 +37,12 @@ const setpersonality: Command = {
         )
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
-    execute: async (context: Context, t: TFunction, args: any) => {
+    execute: async (context: Context, t: TFunction, args) => {
         if (!context.guild) {
-            await context.reply({
+            return {
                 content: 'This command can only be used in a server.',
                 ephemeral: true,
-            });
-            return;
+            };
         }
 
         const presetKey = args.preset as string;
@@ -44,10 +51,10 @@ const setpersonality: Command = {
 
         await db.updateGuildSetting(context.guild.id, { personality });
 
-        await context.reply({
+        return {
             content: `Bot personality has been set to **${presetKey}**! (Tone: ${personality.type}, Intensity: ${personality.intensity})`,
             ephemeral: true,
-        });
+        };
     },
 };
 
