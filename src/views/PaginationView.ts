@@ -1,4 +1,4 @@
-import { ColorResolvable, EmbedBuilder } from "discord.js";
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
 export abstract class PaginationView<T> {
     protected items: T[];
@@ -10,7 +10,7 @@ export abstract class PaginationView<T> {
         this.items = items;
         this.title = title;
         this.itemsPerPage = itemsPerPage;
-        this.color = 0x00AE86;
+        this.color = 0x00ae86;
     }
 
     abstract renderItem(item: T, index: number): string;
@@ -30,12 +30,14 @@ export abstract class PaginationView<T> {
         const description = pageItems
             .map((item, i) => this.renderItem(item, start + i))
             .join('\n');
-        
+
         return new EmbedBuilder()
             .setTitle(this.title)
             .setDescription(description || 'No items to display.')
             .setColor(this.color)
-            .setFooter({ text: `Page ${page} / ${totalPages} (Toal: ${this.items.length})` })
+            .setFooter({
+                text: `Page ${page} / ${totalPages} (Toal: ${this.items.length})`,
+            })
             .setTimestamp();
     }
 }

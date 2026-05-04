@@ -1,0 +1,6 @@
+{
+    "messages": {
+        "lang_updated": "Updated language to {lang}!",
+        "levelup": "You're leveled up to {level}!"
+    }
+}

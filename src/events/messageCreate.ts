@@ -1,12 +1,12 @@
-import { Collection, Events, Message } from "discord.js";
-import { BotEvent } from "./event";
-import { Command } from "../types";
-import { db } from "../database";
-import i18n from "../i18n";
-import config from "../../config.json";
-import logger from "../logger";
-import runCommand from "../utils/runCommand";
-import i18next from "i18next";
+import { Collection, Events, Message } from 'discord.js';
+import { BotEvent } from './event';
+import { Command } from '../types';
+import { db } from '../databases';
+import config from '../config.json';
+import logger from '../logger';
+import runCommand from '../core/runCommand';
+import i18next from 'i18next';
+import * as xpService from '../services/xpService';
 
 const event: BotEvent<Events.MessageCreate> = {
     name: Events.MessageCreate,
@@ -15,42 +15,45 @@ const event: BotEvent<Events.MessageCreate> = {
 
         const userSettings = await db.getUserSettings(message.author.id);
         const lang = userSettings.language || 'en';
-
         const t = i18next.getFixedT(lang);
 
-        try {
-            const oldProfile = await db.getUserProfile(message.author.id) as any;
-            const oldLevel = oldProfile?.level || 1;
+        const isCommand = message.content.startsWith(config.bot_prefix);
 
-            const messageContent = message.cleanContent;
-            const messageWords = messageContent.split(/\s+/).length;
-            const messageLetters = messageContent.length;
+        if (!isCommand) {
+            try {
+                const result = await xpService.handleMessage(message);
 
-            const finalXpToAdd = 5 * ((messageWords / 30) + (messageLetters / 30) / 6);
-
-            await db.addExperience(message.author.id, finalXpToAdd | 0);
-
-            const newProfile = await db.getUserProfile(message.author.id) as any;
-            const newLevel = newProfile?.level || 1;
-
-            if (newLevel > oldLevel) {
-                await message.reply(t('common:levelup', { level: newLevel, lng: lang }));
+                if (result?.leveledUp) {
+                    await message.reply(
+                        t('common:messages.levelup', {
+                            level: result.newLevel,
+                        }),
+                    );
+                }
+            } catch (err) {
+                logger.error('XP system failed:', err);
             }
-        } catch (err) {
-            logger.error('XP Update failed:', err);
         }
 
-        if (!message.content.startsWith(config.bot_prefix)) return;
+        if (!isCommand) return;
 
-        const args = message.content.slice(config.bot_prefix.length).trim().split(/ +/);
+        const args = message.content
+            .slice(config.bot_prefix.length)
+            .trim()
+            .split(/\s+/);
+
         const commandName = args.shift()?.toLowerCase();
         if (!commandName) return;
 
         const command = commands.get(commandName);
-        if (command) {
-            await runCommand(message, command, t)
+        if (!command) return;
+
+        try {
+            await runCommand(message, command);
+        } catch (err) {
+            logger.error(`Command execution failed for ${commandName}:`, err);
         }
-    }
-}
+    },
+};
 
 export default event;

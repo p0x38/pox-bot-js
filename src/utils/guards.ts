@@ -1,51 +1,83 @@
-import { ChatInputCommandInteraction, Message, PermissionResolvable, PermissionsBitField } from "discord.js";
-import config from '../../config.json';
-import { BotMissingPermissions, CommandDisabled, MissingPermissions, NoPrivateMessage, NotOwner } from "./error";
+import { GuildMember, Message, PermissionResolvable } from 'discord.js';
+import config from '../config.json';
+import {
+    BotMissingPermissions,
+    CommandDisabled,
+    MissingPermissions,
+    NoPrivateMessage,
+    NotOwner,
+} from '@/errors/index';
+import type { Context } from '@/contexts/Context';
 
-type CommandContext = Message | ChatInputCommandInteraction;
+function getUser(context: Context) {
+    return context instanceof Message ? context.author : context.user;
+}
+
+function getMember(context: Context): GuildMember | null {
+    if (!context.guild) return null;
+
+    if (context instanceof Message) {
+        return context.member;
+    }
+
+    return context.member instanceof GuildMember ? context.member : null;
+}
 
 export class Guards {
-    static ownerOnly(context: CommandContext) {
-        const user = context instanceof Message ? context.author : context.user;
+    static runAll(context: Context, command: any) {
+        this.checkCommandEnabled(command.name);
+
+        if (command.guildOnly) this.guildOnly(context);
+        if (command.ownerOnly) this.ownerOnly(context);
+        if (command.permissions)
+            this.hasPermissions(context, command.permissions);
+        if (command.botPermissions)
+            this.botHasPermissions(context, command.botPermissions);
+    }
+
+    static ownerOnly(context: Context) {
+        const user = getUser(context);
 
         if (user.id !== config.ownerId) {
             throw new NotOwner();
         }
     }
 
-    static hasPermissions(context: CommandContext, perms: PermissionResolvable[]) {
-        const member = context.member;
-
-        if (!member || !('permissions' in member)) {
-            throw new MissingPermissions(perms.map(p => p.toString()));
-        }
-
-        const permissions = member.permissions as PermissionsBitField;
-
-        const missing = perms.filter(p => !permissions.has(p));
-        if (missing.length > 0) {
-            throw new MissingPermissions(missing.map(p => p.toString()));
+    static guildOnly(context: Context) {
+        if (!context.guild) {
+            throw new NoPrivateMessage();
         }
     }
 
-    static botHasPermissions(context: CommandContext, perms: PermissionResolvable[]) {
-        const me = context.guild?.members.me;
+    static hasPermissions(context: Context, perms: PermissionResolvable[]) {
+        const member = getMember(context);
+
+        if (!member) {
+            throw new NoPrivateMessage();
+        }
+
+        const permissions = member.permissions;
+
+        const missing = perms.filter((p) => !permissions.has(p));
+        if (missing.length > 0) {
+            throw new MissingPermissions(missing.map((p) => p.toString()));
+        }
+    }
+
+    static botHasPermissions(context: Context, perms: PermissionResolvable[]) {
+        if (!context.guild) {
+            throw new NoPrivateMessage();
+        }
+
+        const me = context.guild.members.me;
 
         if (!me) {
             throw new NoPrivateMessage();
         }
 
-        const permissions = me.permissions as PermissionsBitField;
-
-        const missing = perms.filter(p => !permissions.has(p));
+        const missing = perms.filter((p) => !me.permissions.has(p));
         if (missing.length > 0) {
-            throw new BotMissingPermissions(missing.map(p => p.toString()));
-        }
-    }
-
-    static guildOnly(context: CommandContext) {
-        if (!context.guild) {
-            throw new NoPrivateMessage();
+            throw new BotMissingPermissions(missing.map((p) => p.toString()));
         }
     }
 

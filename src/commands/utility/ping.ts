@@ -1,22 +1,23 @@
-import { TFunction } from "i18next";
-import { ChatInputCommandInteraction, Message, SlashCommandBuilder } from "discord.js";
-import { Command, CommandContext, ParsedArgs } from "../../types";
+import { TFunction } from '@/i18n/fluent/t';
+import { Message } from 'discord.js';
+import { Command } from '../../types';
+import type { Context } from '@/contexts/Context';
 
 const ping: Command = {
     name: 'ping',
     description: 'Retrieves bot latency.',
     guildOnly: false,
 
-    execute: async (context: CommandContext, t: TFunction, args: ParsedArgs) => {
+    execute: async (context: Context, t: TFunction) => {
         const latency = context.client.ws.ping;
         const msg = t('messages:commands.ping.success', { latency });
 
-        if (context instanceof Message) {
+        if (context.raw instanceof Message) {
             await context.reply(msg);
         } else {
             await context.reply({ content: msg });
         }
-    }
-}
+    },
+};
 
 export default ping;

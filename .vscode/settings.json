@@ -27,9 +27,7 @@
                 "t(`{key}`{args})",
                 "t(\"{key}\"{args})"
             ],
-            "include": [
-                "**/*.{ts,js}"
-            ]
+            "include": ["**/*.{ts,js}"]
         }
     ],
     "i18n-ally.translate.saveAsCandidates": true,
@@ -37,5 +35,39 @@
     "i18n-ally.annotationMaxLength": 40,
     "i18n-ally.extract.keygenStrategy": "slug",
     "i18n-ally.extract.targetPickingStrategy": "most-similar",
-    "i18n-ally.dirStructure": "dir"
+    "i18n-ally.dirStructure": "dir",
+    "js/ts.preferences.organizeImports": {
+        "accentCollation": true,
+        "caseFirst": "default",
+        "caseSensitivity": "auto",
+        "locale": "auto",
+        "numericCollation": true,
+        "typeOrder": "auto",
+        "unicodeCollation": "unicode"
+    },
+    "js/ts.preferences.preferTypeOnlyAutoImports": true,
+    "js/ts.format.insertSpaceAfterConstructor": true,
+    "js/ts.format.semicolons": "ignore",
+    "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
+    "js/ts.implicitProjectConfig.target": "ESNext",
+    "js/ts.implementationsCodeLens.enabled": true,
+    "js/ts.implementationsCodeLens.showOnAllClassMethods": true,
+    "js/ts.implementationsCodeLens.showOnInterfaceMethods": true,
+    "js/ts.referencesCodeLens.enabled": true,
+    "js/ts.referencesCodeLens.showOnAllFunctions": true,
+    "js/ts.inlayHints.enumMemberValues.enabled": true,
+    "js/ts.tsserver.log": "verbose",
+    "js/ts.tsserver.tracing.enabled": true,
+    "jsts-chat-features.skills.enabled": true,
+    "json.trace.server": "verbose",
+    "npm-intellisense.packageSubfoldersIntellisense": true,
+    "npm-intellisense.scanDevDependencies": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.tabWidth": 4,
+    "editor.formatOnSave": true,
+    "prettier.configPath": ".prettierrc",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.validate": ["javascript", "typescript"]
 }

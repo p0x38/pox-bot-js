@@ -1,14 +1,18 @@
-import { Command } from "../types";
-import { PaginationView } from "./PaginationView";
+import { Command } from '../types';
+import { PaginationView } from './PaginationView';
 
-export class HelpPagination extends PaginationView<Command> {
-    renderItem(item: Command, index: number): string {
+export class HelpPagination extends PaginationView<Command<any>> {
+    renderItem(item: Command<any>, index: number): string {
         let generatedUsage = '';
         if (item.args && item.args.length > 0) {
-            generatedUsage = ' ' + item.args.map(arg => {
-                const wrap = arg.required ? ['<', '>'] : ['[', ']'];
-                return `${wrap}${arg.name}${wrap}`;
-            }).join(' ');
+            generatedUsage =
+                ' ' +
+                item.args
+                    .map((arg: any) => {
+                        const wrap = arg.required ? ['<', '>'] : ['[', ']'];
+                        return `${wrap}${arg.name}${wrap}`;
+                    })
+                    .join(' ');
         } else if (item.usage) {
             generatedUsage = ` ${item.usage}`;
         }

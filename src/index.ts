@@ -4,15 +4,36 @@ import { readdirSync, statSync } from 'node:fs';
 import i18n from './i18n';
 import 'dotenv/config';
 import logger from './logger';
-import { Command, ParsedArgs } from './types';
-import { db } from './database';
+import { Command } from './types';
+import { writeFileSync, readFileSync, unlinkSync, existsSync } from 'node:fs';
+import { db } from './databases';
+
+const LOCK_FILE = path.join(process.cwd(), '.bot.lock');
+
+// Check for existing instance
+if (existsSync(LOCK_FILE)) {
+    try {
+        const pid = parseInt(readFileSync(LOCK_FILE, 'utf8'));
+        process.kill(pid, 0); // Check if process is still running
+        logger.error(
+            `Bot is already running with PID ${pid}. Exiting to prevent duplication.`,
+        );
+        process.exit(1);
+    } catch (e) {
+        // Process is dead, we can take over the lock
+        unlinkSync(LOCK_FILE);
+    }
+}
+
+// Create lock
+writeFileSync(LOCK_FILE, process.pid.toString());
 
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
-    ]
+        GatewayIntentBits.MessageContent,
+    ],
 });
 
 const commands = new Collection<string, Command>();
@@ -20,10 +41,10 @@ const commands = new Collection<string, Command>();
 (client as any).commands = commands;
 (client as any).i18n = i18n;
 
-const commandsPath = path.join(__dirname, 'commands');
-const eventsPath = path.join(__dirname, 'events');
+const commandsPath = path.join(import.meta.dirname, 'commands');
+const eventsPath = path.join(import.meta.dirname, 'events');
 
-function loadCommands(dir: string) {
+async function loadCommands(dir: string) {
     const files = readdirSync(dir);
 
     for (const file of files) {
@@ -31,10 +52,13 @@ function loadCommands(dir: string) {
         const stat = statSync(fullPath);
 
         if (stat.isDirectory()) {
-            loadCommands(fullPath);
-        } else if (file.endsWith('.ts') || file.endsWith('.js')) {
+            await loadCommands(fullPath);
+        } else if (
+            (file.endsWith('.ts') || file.endsWith('.js')) &&
+            !file.endsWith('.d.ts')
+        ) {
             try {
-                const commandModule = require(fullPath);
+                const commandModule = await import(`file://${fullPath}`);
 
                 const command: Command = commandModule.default || commandModule;
 
@@ -47,14 +71,14 @@ function loadCommands(dir: string) {
         }
     }
 }
-
-loadCommands(commandsPath);
+// loadCommands(commandsPath); // Redundant, called in bootstrap
 
 const gratefulShutdown = async () => {
     console.log('Shutdowning the bot...');
+    if (existsSync(LOCK_FILE)) unlinkSync(LOCK_FILE);
     await db.pool.end();
     process.exit(0);
-}
+};
 
 process.on('uncaughtException', (err) => {
     logger.error('Fatal error raised:', err);
@@ -72,28 +96,35 @@ process.on('SIGTERM', gratefulShutdown);
 async function bootstrap() {
     try {
         logger.info('Loading commands...');
-        loadCommands(commandsPath);
+        await loadCommands(commandsPath);
 
         logger.info('Running database migrations...');
         await db.runMigrations();
 
-        const eventFiles = readdirSync(eventsPath).filter(file => file.endsWith('.ts') || file.endsWith('.js'));
+        const eventFiles = readdirSync(eventsPath).filter(
+            (file) =>
+                (file.endsWith('.ts') || file.endsWith('.js')) &&
+                !file.endsWith('.d.ts'),
+        );
         for (const file of eventFiles) {
             const filePath = path.join(eventsPath, file);
-            const module = require(filePath);
+            const module = await import(`file://${filePath}`);
             const event = module.default || module;
 
             if (!event || !event.name) continue;
 
             if (event.once) {
-                client.once(event.name, (...args) => event.execute(...args, commands));
+                client.once(event.name, (...args) =>
+                    event.execute(...args, commands),
+                );
             } else {
-                client.on(event.name, (...args) => event.execute(...args, commands));
+                client.on(event.name, (...args) =>
+                    event.execute(...args, commands),
+                );
             }
         }
 
         await client.login(process.env.DISCORD_TOKEN);
-        
     } catch (error) {
         logger.error('Failed to start the bot:', error);
         process.exit(1);

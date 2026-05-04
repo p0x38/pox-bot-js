@@ -1,0 +1,51 @@
+{
+    "help": {
+        "messages": {
+            "command_not_found": "Command '{{name}}' was not found."
+        },
+        "embeds": {
+            "default": {
+                "title": "Bot commands help :3",
+                "description": "Here's a list of all available commands~! :3"
+            }
+        }
+    },
+    "leaderboard": {
+        "description": "Check the top XP earners in this server!",
+        "messages": {
+            "empty": "No users found on the leaderboard yet!"
+        },
+        "embeds": {
+            "main": {
+                "title": "🏆 Global Leaderboard",
+                "description": "Top 10 active users on the bot!"
+            }
+        }
+    },
+    "profile": {
+        "description": {
+            "slash": "View your current level, XP, and progress toward the next level!",
+            "prefix": "Show user profile and stats."
+        },
+        "options": {
+            "target": {
+                "description": "The user whose profile you want to see"
+            }
+        },
+        "messages": {
+            "need_xp": "{count, plural, one {Need # more XP point to level up!} other {Need # more XP points to level up!}}"
+        },
+        "embeds": {
+            "main": {
+                "title": "User Profile",
+                "description": "Current status for {{user}}",
+                "fields": {
+                    "level": "Level",
+                    "rank": "Global Rank",
+                    "xp": "Experience",
+                    "progress": "Progress to Level {{level}}"
+                }
+            }
+        }
+    }
+}
