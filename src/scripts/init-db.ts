@@ -1,16 +1,12 @@
-import fs from 'fs';
-import path from 'path';
 import { db } from '../databases';
+import { runMigrations } from '../databases/migration';
 import logger from '../logger';
 
 async function init() {
     try {
         logger.info('Trying to initialize database...');
 
-        const sqlPath = path.join(__dirname, '../../resources/sql/schema.sql');
-        const sql = fs.readFileSync(sqlPath, 'utf8');
-
-        await db.query(sql);
+        await runMigrations();
 
         logger.info('Completely initialized!');
     } catch (err) {

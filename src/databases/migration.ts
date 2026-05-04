@@ -8,7 +8,22 @@ export async function runMigrations() {
     try {
         await client.query('BEGIN');
         const categories = ['tables', 'indexes', 'views'];
-        const baseDir = path.join(import.meta.dirname, '../assets/migrations');
+        const paths = [
+            path.join(process.cwd(), 'dist/assets/migrations'),
+            path.join(process.cwd(), 'src/assets/migrations'),
+        ];
+        let baseDir = '';
+        for (const p of paths) {
+            if (existsSync(p)) {
+                baseDir = p;
+                break;
+            }
+        }
+
+        if (!baseDir) {
+            logger.warn('Migration directory not found, skipping migrations.');
+            return;
+        }
 
         for (const category of categories) {
             const dir = path.join(baseDir, category);
