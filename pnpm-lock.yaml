@@ -33,8 +33,8 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3
       i18next-fs-backend:
-        specifier: ^2.6.5
-        version: 2.6.5
+        specifier: ^2.6.6
+        version: 2.6.6
       i18next-icu:
         specifier: ^2.4.3
         version: 2.4.3(intl-messageformat@11.2.3)
@@ -1583,6 +1583,7 @@ packages:
   git-raw-commits@5.0.1:
     resolution: {integrity: sha512-Y+csSm2GD/PCSh6Isd/WiMjNAydu0VBiG9J7EdQsNA5P9uXvLayqjmTsNlK5Gs9IhblFZqOU0yid5Il5JPoLiQ==}
     engines: {node: '>=18'}
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@8.1.1:
@@ -1644,8 +1645,8 @@ packages:
   i18next-chained-backend@5.0.3:
     resolution: {integrity: sha512-VUwc+yFpZzmIvtPfSdTv1+CjgZGZwGug6qHyIuSES/n7RDhVARFxthjML0anUMJVjlvLfRW/x6+U4UrxXBflmw==}
 
-  i18next-fs-backend@2.6.5:
-    resolution: {integrity: sha512-+7HBrlaj3UFnNC9HqiXaIlNkwNINYkgQ2PS4h7qW/WGHC9/+OU9Xi0/tdvjjXATw3YCcpmNV7S3zDD9e10pTWg==}
+  i18next-fs-backend@2.6.6:
+    resolution: {integrity: sha512-mYGu6Nt8RIp3X/U8Y+Gej1wo5xmYWmGKLqBGMCC2OCAou5rW5epeHgHmVcw20mJs9Z9+DAPHIxQPNCgFyPRMeg==}
 
   i18next-icu@2.4.3:
     resolution: {integrity: sha512-Clb5XCp416Z+BkJUTATCjmDcw2AFzSUDVLxLVK/KhtXP6TJQHrht+6MqoJU1hCpyoCBKe59wMO9pvCvYroNcKg==}
@@ -4262,7 +4263,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.2
 
-  i18next-fs-backend@2.6.5: {}
+  i18next-fs-backend@2.6.6: {}
 
   i18next-icu@2.4.3(intl-messageformat@11.2.3):
     dependencies:
