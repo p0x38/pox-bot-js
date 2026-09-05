@@ -14,7 +14,7 @@ import {
     type Client,
 } from 'discord.js';
 import type { CommandContext } from '@/i18n/context/command';
-import type { EmotionType, Personality } from '@/i18n/context/types';
+import type { ContextMetadata } from './ContextMetadata';
 
 type ReplyOptions = {
     content?: string;
@@ -46,29 +46,20 @@ export function resolveLocale(raw: RawContext, dbLocale?: string): string {
 
 export class Context {
     public readonly raw: RawContext;
-    public readonly locale: string;
-    public personality: Personality;
-    public emotion: EmotionType;
-    public streak: number;
+    public readonly metadata: ContextMetadata;
 
-    constructor(
-        ctx: RawContext,
-        dbLocale?: string,
-        personality?: Personality,
-        emotion?: EmotionType,
-        streak?: number,
-    ) {
+    constructor(ctx: RawContext, metadata: ContextMetadata) {
         if (ctx instanceof Context) {
             throw new Error('Context cannot wrap another Context');
         }
+
         this.raw = ctx;
-        this.locale = resolveLocale(ctx, dbLocale);
-        this.personality = personality ?? {
-            type: 'casual',
-            intensity: 'normal',
-        };
-        this.emotion = emotion ?? 'happy';
-        this.streak = streak ?? 1;
+
+        this.metadata = metadata;
+    }
+
+    get locale(): string {
+        return this.metadata.locale;
     }
 
     get user(): User {
