@@ -15,7 +15,7 @@ test('Context exposes metadata through compatibility accessors', () => {
     const raw = Object.create(Message.prototype) as Message;
     raw.guild = null;
 
-    const context = new Context(raw, 'en');
+    const context = new Context(raw, new ContextMetadata({ locale: 'en' }));
 
     assert.ok(context.metadata instanceof ContextMetadata);
     assert.equal(context.locale, context.metadata.locale);
@@ -45,7 +45,9 @@ test('resolveLocale falls back to English', () => {
 });
 
 test('resolveLocale uses the interaction locale', () => {
-    const raw = Object.create(ChatInputCommandInteraction.prototype) as ChatInputCommandInteraction;
+    const raw = Object.create(
+        ChatInputCommandInteraction.prototype,
+    ) as ChatInputCommandInteraction;
     raw.locale = 'ja';
 
     assert.equal(resolveLocale(raw), 'ja');

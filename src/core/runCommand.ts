@@ -1,11 +1,12 @@
 import { Command, RawContext } from '../types';
 import { ErrorHandler } from '@/errors/handler';
-import { Context } from '@/contexts/Context';
+import { Context, resolveLocale } from '@/contexts/Context';
 import { commandPipeline } from '@/middlewares/index';
 import { createT } from '@/i18n/fluent/createT';
 import { db } from '@/databases/index';
 import { Message } from 'discord.js';
 import { commandTracker } from '@/services/commandTracker.service';
+import { ContextMetadata } from '@/contexts/ContextMetadata';
 
 export default async function (rawContext: RawContext, command: Command) {
     const userId =
@@ -19,13 +20,14 @@ export default async function (rawContext: RawContext, command: Command) {
 
     const repeatCount = commandTracker.recordAndGetCount(userId, command.name);
 
-    const ctx = new Context(
-        rawContext,
-        settings?.language,
-        guildSettings?.personality,
-        guildSettings?.emotion,
-        repeatCount,
-    );
+    const metadata = new ContextMetadata({
+        locale: resolveLocale(rawContext, settings?.language),
+        personality: guildSettings?.personality,
+        emotion: guildSettings?.emotion,
+        streak: repeatCount,
+    });
+
+    const ctx = new Context(rawContext, metadata);
 
     // Repetition fatigue logic
     if (repeatCount >= 5) {
