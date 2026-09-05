@@ -9,6 +9,7 @@ export default tseslint.config([
             '*.js',
             'eslint.config.mjs',
             '.prettierrc',
+            '.release-it.ts',
         ],
     },
     js.configs.recommended,
