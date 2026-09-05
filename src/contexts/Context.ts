@@ -15,6 +15,7 @@ import {
 } from 'discord.js';
 import type { CommandContext } from '@/i18n/context/command';
 import type { EmotionType, Personality } from '@/i18n/context/types';
+import { ContextMetadata } from './ContextMetadata';
 
 type ReplyOptions = {
     content?: string;
@@ -26,7 +27,7 @@ type ReplyOptions = {
 
 type ReplyInput = string | ReplyOptions;
 
-export function isMessage(ctx: any): ctx is Message {
+export function isMessage(ctx: unknown): ctx is Message {
     return ctx instanceof Message;
 }
 
@@ -46,10 +47,7 @@ export function resolveLocale(raw: RawContext, dbLocale?: string): string {
 
 export class Context {
     public readonly raw: RawContext;
-    public readonly locale: string;
-    public personality: Personality;
-    public emotion: EmotionType;
-    public streak: number;
+    public readonly metadata: ContextMetadata;
 
     constructor(
         ctx: RawContext,
@@ -61,14 +59,42 @@ export class Context {
         if (ctx instanceof Context) {
             throw new Error('Context cannot wrap another Context');
         }
+
         this.raw = ctx;
-        this.locale = resolveLocale(ctx, dbLocale);
-        this.personality = personality ?? {
-            type: 'casual',
-            intensity: 'normal',
-        };
-        this.emotion = emotion ?? 'happy';
-        this.streak = streak ?? 1;
+        this.metadata = new ContextMetadata({
+            locale: resolveLocale(ctx, dbLocale),
+            personality,
+            emotion,
+            streak,
+        });
+    }
+
+    get locale(): string {
+        return this.metadata.locale;
+    }
+
+    get personality(): Personality {
+        return this.metadata.personality;
+    }
+
+    set personality(value: Personality) {
+        this.metadata.setPersonality(value);
+    }
+
+    get emotion(): EmotionType {
+        return this.metadata.emotion;
+    }
+
+    set emotion(value: EmotionType) {
+        this.metadata.setEmotion(value);
+    }
+
+    get streak(): number {
+        return this.metadata.streak;
+    }
+
+    set streak(value: number) {
+        this.metadata.streak = value;
     }
 
     get user(): User {
