@@ -1,12 +1,14 @@
 import { Collection, Events, Message } from 'discord.js';
-import { BotEvent } from './event';
-import { Command } from '../types';
-import { db } from '../databases';
-import config from '../config.json';
-import logger from '../logger';
-import runCommand from '../core/runCommand';
 import i18next from 'i18next';
-import * as xpService from '../services/xpService';
+
+import runCommand from '@/application/runCommand';
+import { Command } from '@/commands/types';
+import config from '@/config.json';
+import { db } from '@/database';
+import logger from '@/logger';
+import * as xpService from '@/services/xpService';
+
+import { BotEvent } from './event';
 
 const event: BotEvent<Events.MessageCreate> = {
     name: Events.MessageCreate,

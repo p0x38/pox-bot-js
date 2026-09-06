@@ -1,8 +1,10 @@
 import { EmbedBuilder } from 'discord.js';
 import { TFunction } from 'i18next';
-import { BotError } from './index';
-import logger from '../logger';
+
 import type { Context } from '@/contexts/Context';
+import logger from '@/logger';
+
+import { BotError } from './index';
 
 export class ErrorHandler {
     static async handle(

@@ -1,6 +1,6 @@
+import { getBundle } from './init';
 import { applyContext } from '../context/engine';
 import type { I18nContext } from '../context/types';
-import { getBundle } from './init';
 
 type Args = Record<string, string | number | boolean>;
 

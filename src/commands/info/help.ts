@@ -5,9 +5,11 @@ import {
     ComponentType,
     SlashCommandBuilder,
 } from 'discord.js';
-import { Command } from '../../types';
-import { HelpPagination } from '../../views/HelpView';
+
 import type { Context } from '@/contexts/Context';
+import { HelpPagination } from '@/views/HelpView';
+
+import { Command } from '../types';
 
 export const help: Command = {
     name: 'help',

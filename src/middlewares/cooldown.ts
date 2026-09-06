@@ -1,6 +1,8 @@
-import type { Context } from '@/contexts/Context';
-import type { Command, Middleware } from '@/types';
 import type { TFunction } from 'i18next';
+
+import type { Context } from '@/contexts/Context';
+
+import type { Command, Middleware } from '@/types';
 
 const cooldowns = new Map<string, number>();
 

@@ -1,5 +1,6 @@
-import type { ArgumentDefinition } from '@/types';
 import { SlashCommandBuilder } from 'discord.js';
+
+import type { ArgumentDefinition } from '@/commands/types';
 
 export function buildSlashCommand(
     name: string,

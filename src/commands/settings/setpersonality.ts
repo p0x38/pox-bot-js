@@ -1,9 +1,11 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { db } from '../../databases';
-import { TFunction } from '@/i18n/fluent/t';
-import { Command } from '../../types';
+
 import type { Context } from '@/contexts/Context';
+import { db } from '@/database';
 import { personalityPresets } from '@/i18n/context/presets';
+import { TFunction } from '@/i18n/fluent/t';
+
+import { Command } from '../types';
 
 const name = 'setpersonality';
 const description = "Change the bot's personality for this server.";

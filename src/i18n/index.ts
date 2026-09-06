@@ -1,9 +1,7 @@
 import config from '../config.json';
-
-import { getLocalePath } from './paths';
 import { getLanguages, getReferenceLang, getNamespaces } from './discovery';
-
 import { initI18n } from './init';
+import { getLocalePath } from './paths';
 
 const localesPath = getLocalePath();
 

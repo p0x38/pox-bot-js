@@ -1,5 +1,6 @@
 import { GuildMember, Message, PermissionResolvable } from 'discord.js';
-import config from '../config.json';
+
+import type { Context } from '@/contexts/Context';
 import {
     BotMissingPermissions,
     CommandDisabled,
@@ -7,7 +8,8 @@ import {
     NoPrivateMessage,
     NotOwner,
 } from '@/errors/index';
-import type { Context } from '@/contexts/Context';
+
+import config from '../config.json';
 
 function getUser(context: Context) {
     return context instanceof Message ? context.author : context.user;

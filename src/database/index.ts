@@ -1,7 +1,7 @@
-import { pool } from './pool';
-import { userRepo } from './user.repo';
 import { guildRepo } from './guild.repo';
 import { runMigrations } from './migration';
+import { pool } from './pool';
+import { userRepo } from './user.repo';
 
 export { pool, runMigrations };
 

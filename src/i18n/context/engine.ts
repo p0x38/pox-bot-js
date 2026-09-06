@@ -1,5 +1,5 @@
-import { rules } from './rules.js';
-import type { I18nContext } from './types.js';
+import { rules } from './rules';
+import type { I18nContext } from './types';
 
 export function applyContext(text: string, key: string, ctx?: I18nContext) {
     if (!ctx) return text;

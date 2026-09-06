@@ -1,5 +1,5 @@
 import config from '@/config.json';
-import type { GuildSettings } from '@/types';
+import type { GuildSettings } from '@/types/guilds';
 
 export const DEFAULT_GUILD_SETTINGS: GuildSettings = {
     guildId: '',

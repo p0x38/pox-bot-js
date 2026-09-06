@@ -1,5 +1,7 @@
-import type { Context } from '@/contexts/Context';
 import type { User } from 'discord.js';
+
+import type { Context } from '@/contexts/Context';
+
 import { BaseConverter } from './BaseConverter';
 
 export class UserConverter extends BaseConverter<User | null> {

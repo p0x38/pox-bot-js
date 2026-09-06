@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+
 import i18next, { languages } from '../i18n';
 
 const DISCORD_LOCALE_MAP: Record<string, any> = {

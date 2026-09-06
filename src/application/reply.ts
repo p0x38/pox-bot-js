@@ -1,10 +1,11 @@
-import type { Context } from '@/contexts/Context';
 import {
-    Message,
-    MessageFlags,
     type InteractionReplyOptions,
+    Message,
     type MessageCreateOptions,
+    MessageFlags,
 } from 'discord.js';
+
+import type { Context } from '@/contexts/Context';
 
 type ReplyOptions = {
     content?: string;

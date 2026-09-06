@@ -1,5 +1,6 @@
-import { db } from '@/databases';
 import type { Message } from 'discord.js';
+
+import { db } from '@/database';
 
 type XpResult = {
     leveledUp: boolean;

@@ -1,6 +1,7 @@
-import { pool } from './pool';
-import { GuildSettings } from '../types';
+import { GuildSettings } from '@/types/guilds';
+
 import { DEFAULT_GUILD_SETTINGS } from './defaults';
+import { pool } from './pool';
 
 const guildCache = new Map<string, GuildSettings>();
 

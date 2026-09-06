@@ -1,12 +1,20 @@
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
+import {
+    readdirSync,
+    statSync,
+    writeFileSync,
+    readFileSync,
+    unlinkSync,
+    existsSync,
+} from 'node:fs';
 import path from 'node:path';
-import { readdirSync, statSync } from 'node:fs';
-import i18n from './i18n';
+
+import { Client, GatewayIntentBits, Collection } from 'discord.js';
+
+import { Command } from '@/commands/types';
+import { db } from '@/database';
+import i18n from '@/i18n';
 import 'dotenv/config';
-import logger from './logger';
-import { Command } from './types';
-import { writeFileSync, readFileSync, unlinkSync, existsSync } from 'node:fs';
-import { db } from './databases';
+import logger from '@/logger';
 
 const LOCK_FILE = path.join(process.cwd(), '.bot.lock');
 
@@ -19,7 +27,7 @@ if (existsSync(LOCK_FILE)) {
             `Bot is already running with PID ${pid}. Exiting to prevent duplication.`,
         );
         process.exit(1);
-    } catch (e) {
+    } catch (_e) {
         // Process is dead, we can take over the lock
         unlinkSync(LOCK_FILE);
     }

@@ -1,4 +1,3 @@
-import { RawContext } from '@/types/index';
 import {
     Message,
     ChatInputCommandInteraction,
@@ -13,9 +12,12 @@ import {
     type TextBasedChannel,
     type Client,
 } from 'discord.js';
+
+import { RawContext } from '@/commands/types';
 import type { CommandContext } from '@/i18n/context/command';
-import type { ContextMetadata } from './ContextMetadata';
 import type { EmotionType, Personality } from '@/i18n/context/types';
+
+import type { ContextMetadata } from './ContextMetadata';
 
 type ReplyOptions = {
     content?: string;

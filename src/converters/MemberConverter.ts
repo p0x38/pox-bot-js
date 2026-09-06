@@ -1,6 +1,8 @@
-import type { Context } from '@/contexts/Context';
-import { BaseConverter, ConversionError } from './BaseConverter';
 import { GuildMember } from 'discord.js';
+
+import type { Context } from '@/contexts/Context';
+
+import { BaseConverter, ConversionError } from './BaseConverter';
 
 export class MemberConverter extends BaseConverter<GuildMember> {
     readonly name = 'Member';
@@ -28,7 +30,7 @@ export class MemberConverter extends BaseConverter<GuildMember> {
             }
 
             return member;
-        } catch (error) {
+        } catch (_error) {
             throw new ConversionError('error-member-not-found', {
                 input: value,
             });

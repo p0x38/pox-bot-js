@@ -1,7 +1,9 @@
-import type { Context } from '@/contexts/Context';
-import type { Command, Middleware } from '@/types';
-import { ArgumentParser } from '@/core/parser';
 import type { TFunction } from 'i18next';
+
+import { ArgumentParser } from '@/application/parser';
+import type { Command } from '@/commands/types';
+import type { Context } from '@/contexts/Context';
+import type { Middleware } from '@/types/middlewares';
 
 export const executeCommand: Middleware = async (
     ctx: Context,

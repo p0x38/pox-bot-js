@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+
 import { ContextMetadata } from '@/contexts/ContextMetadata';
 
 test('ContextMetadata uses the expected defaults', () => {
@@ -47,7 +48,10 @@ test('ContextMetadata mutates streak state', () => {
 
 test('ContextMetadata mutates emotion and personality', () => {
     const metadata = new ContextMetadata({ locale: 'en' });
-    const personality = { type: 'chaotic' as const, intensity: 'high' as const };
+    const personality = {
+        type: 'chaotic' as const,
+        intensity: 'high' as const,
+    };
 
     metadata.setEmotion('angry');
     metadata.setPersonality(personality);

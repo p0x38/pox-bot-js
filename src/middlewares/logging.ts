@@ -1,7 +1,9 @@
-import logger from '@/logger';
-import type { Context } from '@/contexts/Context';
-import type { Command, Middleware } from '@/types';
 import type { TFunction } from 'i18next';
+
+import type { Context } from '@/contexts/Context';
+import logger from '@/logger';
+
+import type { Command, Middleware } from '@/types';
 
 export const logging: Middleware = async (
     ctx: Context,

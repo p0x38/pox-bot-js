@@ -1,6 +1,6 @@
-import { db } from '../databases';
-import { runMigrations } from '../databases/migration';
-import logger from '../logger';
+import { db } from '@/database';
+import { runMigrations } from '@/database/migration';
+import logger from '@/logger';
 
 async function init() {
     try {

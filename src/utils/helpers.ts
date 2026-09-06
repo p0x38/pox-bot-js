@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+
 import type { Context } from '@/contexts/Context';
 
 export async function universalReply(context: Context, options: string | any) {

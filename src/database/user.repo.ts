@@ -1,5 +1,5 @@
 import { pool } from './pool';
-import { UserSettings } from '../types';
+import { UserSettings } from './types';
 
 export const userRepo = {
     async getUserStats(userId: string) {

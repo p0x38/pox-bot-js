@@ -1,11 +1,12 @@
 import { Message } from 'discord.js';
-import { MissingRequiredArgument } from '@/errors/index';
-import { ArgumentDefinition, type InferArgs } from '../types';
-import { CONVERTER_MAP, getConvertedValue } from '@/converters';
-import { db } from '../databases';
-import i18n from '../i18n';
-import config from '../config.json';
+
+import { ArgumentDefinition, type InferArgs } from '@/commands/types';
+import config from '@/config.json';
 import type { Context } from '@/contexts/Context';
+import { getConvertedValue } from '@/converters';
+import { db } from '@/database';
+import { MissingRequiredArgument } from '@/errors/index';
+import i18n from '@/i18n';
 
 export class ArgumentParser {
     static async getContextualT(context: Context) {

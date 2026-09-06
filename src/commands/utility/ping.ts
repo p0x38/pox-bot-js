@@ -1,7 +1,6 @@
-import { TFunction } from '@/i18n/fluent/t';
-import { Message } from 'discord.js';
-import { Command } from '../../types';
 import type { Context } from '@/contexts/Context';
+
+import { Command } from '../types';
 
 const ping: Command = {
     name: 'ping',

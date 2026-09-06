@@ -1,4 +1,5 @@
-import { Command } from '../types';
+import { Command } from '@/commands/types';
+
 import { PaginationView } from './PaginationView';
 
 export class HelpPagination extends PaginationView<Command<any>> {

@@ -1,9 +1,10 @@
+import type { Context } from '@/contexts/Context';
 import logger from '@/logger';
+
 import type { ConverterConstructor, IConverter } from './BaseConverter';
 import { MemberConverter } from './MemberConverter';
 import { SettingsConverter } from './SettingsConverter';
 import { UserConverter } from './UserConverter';
-import type { Context } from '@/contexts/Context';
 
 type ConverterEntry = IConverter<any> | ConverterConstructor;
 

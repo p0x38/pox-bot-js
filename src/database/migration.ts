@@ -1,7 +1,9 @@
-import path from 'node:path';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
+
+import logger from '@/logger';
+
 import { pool } from './pool';
-import logger from '../logger';
 
 export async function runMigrations() {
     const client = await pool.connect();

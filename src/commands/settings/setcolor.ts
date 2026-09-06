@@ -1,13 +1,13 @@
-import { TFunction } from '@/i18n/fluent/t';
-import { Command } from '../../types';
 import type { Context } from '@/contexts/Context';
+
+import { Command } from '../types';
 
 const setcolor: Command = {
     name: 'setcolor',
     description: 'Set your profile color.',
     guildOnly: false,
 
-    execute: async (context: Context) => {
+    execute: async (_context: Context) => {
         // TODO: Implement setcolor
         return {
             key: 'messages-commands-setcolor-success',

@@ -1,9 +1,11 @@
 import { Collection, Events, Interaction } from 'discord.js';
+
+import runCommand from '@/application/runCommand';
+import { Command } from '@/commands/types';
+import { db } from '@/database';
+import logger from '@/logger';
+
 import { BotEvent } from './event';
-import { Command } from '../types';
-import logger from '../logger';
-import { db } from '../databases';
-import runCommand from '../core/runCommand';
 
 const event: BotEvent<Events.InteractionCreate> = {
     name: Events.InteractionCreate,

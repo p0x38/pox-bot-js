@@ -1,6 +1,8 @@
 import { EmbedBuilder } from 'discord.js';
-import { db } from '@/databases';
-import { Command } from '@/types';
+
+import { db } from '@/database';
+
+import { Command } from '../types';
 
 const command: Command = {
     name: 'leaderboard',

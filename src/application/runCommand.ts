@@ -1,12 +1,13 @@
-import { Command, RawContext } from '../types';
-import { ErrorHandler } from '@/errors/handler';
-import { Context, resolveLocale } from '@/contexts/Context';
-import { commandPipeline } from '@/middlewares/index';
-import { createT } from '@/i18n/fluent/createT';
-import { db } from '@/databases/index';
 import { Message } from 'discord.js';
-import { commandTracker } from '@/services/commandTracker.service';
+
+import { Command, RawContext } from '@/commands/types';
+import { Context, resolveLocale } from '@/contexts/Context';
 import { ContextMetadata } from '@/contexts/ContextMetadata';
+import { db } from '@/database';
+import { ErrorHandler } from '@/errors/handler';
+import { createT } from '@/i18n/fluent/createT';
+import { commandPipeline } from '@/middlewares/index';
+import { commandTracker } from '@/services/commandTracker.service';
 
 export default async function (rawContext: RawContext, command: Command) {
     const userId =

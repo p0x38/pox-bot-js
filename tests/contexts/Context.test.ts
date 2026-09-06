@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+
+import { ChatInputCommandInteraction, Message } from 'discord.js';
+
 import { Context, resolveLocale } from '@/contexts/Context';
 import { ContextMetadata } from '@/contexts/ContextMetadata';
-import { ChatInputCommandInteraction, Message } from 'discord.js';
 
 test('resolveLocale prefers the database locale', () => {
     const raw = {

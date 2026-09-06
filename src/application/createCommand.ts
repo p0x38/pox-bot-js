@@ -1,4 +1,5 @@
-import type { ArgumentDefinition, Command } from '@/types';
+import type { ArgumentDefinition, Command } from '@/commands/types';
+
 import { buildSlashCommand } from './buildSlash';
 
 export function createCommand<

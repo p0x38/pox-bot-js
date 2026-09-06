@@ -1,5 +1,6 @@
-import { db } from '../databases';
 import type { Context } from '@/contexts/Context';
+import { db } from '@/database';
+
 import { BaseConverter } from './BaseConverter';
 
 export class SettingsConverter extends BaseConverter<any> {
