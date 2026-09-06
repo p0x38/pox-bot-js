@@ -15,6 +15,7 @@ import {
 } from 'discord.js';
 import type { CommandContext } from '@/i18n/context/command';
 import type { ContextMetadata } from './ContextMetadata';
+import type { EmotionType, Personality } from '@/i18n/context/types';
 
 type ReplyOptions = {
     content?: string;
@@ -26,7 +27,7 @@ type ReplyOptions = {
 
 type ReplyInput = string | ReplyOptions;
 
-export function isMessage(ctx: any): ctx is Message {
+export function isMessage(ctx: unknown): ctx is Message {
     return ctx instanceof Message;
 }
 
@@ -60,6 +61,30 @@ export class Context {
 
     get locale(): string {
         return this.metadata.locale;
+    }
+
+    get personality(): Personality {
+        return this.metadata.personality;
+    }
+
+    set personality(value: Personality) {
+        this.metadata.setPersonality(value);
+    }
+
+    get emotion(): EmotionType {
+        return this.metadata.emotion;
+    }
+
+    set emotion(value: EmotionType) {
+        this.metadata.setEmotion(value);
+    }
+
+    get streak(): number {
+        return this.metadata.streak;
+    }
+
+    set streak(value: number) {
+        this.metadata.streak = value;
     }
 
     get user(): User {

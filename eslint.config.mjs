@@ -9,6 +9,7 @@ export default tseslint.config([
             '*.js',
             'eslint.config.mjs',
             '.prettierrc',
+            '.release-it.ts',
         ],
     },
     js.configs.recommended,
@@ -16,7 +17,7 @@ export default tseslint.config([
     {
         languageOptions: {
             parserOptions: {
-                project: true,
+                project: ['./tsconfig.json', './tsconfig.test.json'],
                 tsconfigRootDir: import.meta.dirname,
             },
         },
