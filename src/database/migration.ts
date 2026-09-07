@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 import { pool } from './pool';
 

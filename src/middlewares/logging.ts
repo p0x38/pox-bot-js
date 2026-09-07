@@ -2,7 +2,7 @@ import type { TFunction } from 'i18next';
 
 import type { Command } from '@/commands/types';
 import type { Context } from '@/contexts/Context';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 import type { Middleware } from './types';
 

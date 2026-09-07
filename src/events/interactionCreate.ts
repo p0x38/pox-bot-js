@@ -3,7 +3,7 @@ import { Collection, Events, Interaction } from 'discord.js';
 import runCommand from '@/application/runCommand';
 import { Command } from '@/commands/types';
 import { db } from '@/database';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 import { BotEvent } from './event';
 

@@ -2,7 +2,7 @@ import { EmbedBuilder } from 'discord.js';
 import { TFunction } from 'i18next';
 
 import type { Context } from '@/contexts/Context';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 import { BotError } from './index';
 

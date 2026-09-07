@@ -1,11 +1,4 @@
-import {
-    readdirSync,
-    statSync,
-    writeFileSync,
-    readFileSync,
-    unlinkSync,
-    existsSync,
-} from 'node:fs';
+import { readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 import { Client, GatewayIntentBits, Collection } from 'discord.js';
@@ -14,27 +7,62 @@ import { Command } from '@/commands/types';
 import { db } from '@/database';
 import i18n from '@/i18n';
 import 'dotenv/config';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
-const LOCK_FILE = path.join(process.cwd(), '.bot.lock');
+import { InstanceLock } from './application/InstanceLock';
 
-// Check for existing instance
-if (existsSync(LOCK_FILE)) {
-    try {
-        const pid = parseInt(readFileSync(LOCK_FILE, 'utf8'));
-        process.kill(pid, 0); // Check if process is still running
-        logger.error(
-            `Bot is already running with PID ${pid}. Exiting to prevent duplication.`,
-        );
-        process.exit(1);
-    } catch (_e) {
-        // Process is dead, we can take over the lock
-        unlinkSync(LOCK_FILE);
-    }
+const lock = new InstanceLock();
+
+try {
+    await lock.acquire();
+} catch (error) {
+    logger.error('Failed to acquire instance lock:', error);
+    process.exit(1);
 }
 
-// Create lock
-writeFileSync(LOCK_FILE, process.pid.toString());
+let shuttingDown = false;
+
+const shutdown = async (signal: string, exitCode = 0) => {
+    if (shuttingDown) {
+        return;
+    }
+
+    shuttingDown = true;
+
+    logger.info(`Received ${signal}, shutting down...`);
+
+    try {
+        await lock.release();
+        await db.pool.end();
+
+        logger.info('Shutdown complete.');
+    } catch (error) {
+        logger.error('Error during shutdown:', error);
+        exitCode = 1;
+    }
+
+    process.exit(exitCode);
+};
+
+process.once('SIGINT', () => {
+    void shutdown('SIGINT');
+});
+
+process.once('SIGTERM', () => {
+    void shutdown('SIGTERM');
+});
+
+process.once('uncaughtException', (error) => {
+    logger.error('Fatal error raised:', error);
+
+    void shutdown('uncaughtException', 1);
+});
+
+process.once('unhandledRejection', (error) => {
+    logger.error('Unhandled rejection raised:', error);
+
+    void shutdown('unhandledRejection', 1);
+});
 
 const client = new Client({
     intents: [
@@ -79,27 +107,6 @@ async function loadCommands(dir: string) {
         }
     }
 }
-// loadCommands(commandsPath); // Redundant, called in bootstrap
-
-const gratefulShutdown = async () => {
-    console.log('Shutdowning the bot...');
-    if (existsSync(LOCK_FILE)) unlinkSync(LOCK_FILE);
-    await db.pool.end();
-    process.exit(0);
-};
-
-process.on('uncaughtException', (err) => {
-    logger.error('Fatal error raised:', err);
-
-    setTimeout(() => process.exit(1), 1000);
-});
-
-process.on('unhandledRejection', (error) => {
-    logger.error('Unhandled rejection raised:', error);
-});
-
-process.on('SIGINT', gratefulShutdown);
-process.on('SIGTERM', gratefulShutdown);
 
 async function bootstrap() {
     try {
@@ -114,6 +121,7 @@ async function bootstrap() {
                 (file.endsWith('.ts') || file.endsWith('.js')) &&
                 !file.endsWith('.d.ts'),
         );
+
         for (const file of eventFiles) {
             const filePath = path.join(eventsPath, file);
             const module = await import(`file://${filePath}`);
@@ -135,7 +143,7 @@ async function bootstrap() {
         await client.login(process.env.DISCORD_TOKEN);
     } catch (error) {
         logger.error('Failed to start the bot:', error);
-        process.exit(1);
+        await shutdown('bootstrap failure', 1);
     }
 }
 

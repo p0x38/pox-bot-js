@@ -1,3 +1,4 @@
+import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createLogger, format, transports, type Logger } from 'winston';
@@ -7,6 +8,8 @@ import { getPlatformPaths } from '@/platform';
 const { combine, timestamp, printf, colorize, padLevels, errors, ms } = format;
 
 const paths = getPlatformPaths('pox-bot');
+
+mkdirSync(paths.logs, { recursive: true });
 
 const richConsoleFormat = printf(
     ({ level, message, timestamp, ms, stack, ...metadata }) => {

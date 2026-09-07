@@ -2,7 +2,7 @@ import { basename } from 'node:path';
 
 import chokidar from 'chokidar';
 
-import logger from '@/logger.js';
+import { logger } from '@/logger';
 
 import { getLocalePath } from './paths.js';
 

@@ -1,5 +1,5 @@
 import type { Context } from '@/contexts/Context';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 import type { ConverterConstructor, IConverter } from './BaseConverter';
 import { MemberConverter } from './MemberConverter';

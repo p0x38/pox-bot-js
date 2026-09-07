@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 
 import 'dotenv/config';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 export const pool = new Pool({
     host: process.env.PGHOST,

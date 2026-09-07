@@ -5,7 +5,7 @@ import runCommand from '@/application/runCommand';
 import { Command } from '@/commands/types';
 import config from '@/config.json';
 import { db } from '@/database';
-import logger from '@/logger';
+import { logger } from '@/logger';
 import * as xpService from '@/services/xpService';
 
 import { BotEvent } from './event';

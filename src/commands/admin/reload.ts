@@ -7,7 +7,7 @@ import i18next from 'i18next';
 import type { Context } from '@/contexts/Context';
 import { clearCache } from '@/i18n/cache';
 import { TFunction } from '@/i18n/fluent/t';
-import logger from '@/logger';
+import { logger } from '@/logger';
 
 import { Command } from '../types';
 
