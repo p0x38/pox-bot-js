@@ -1,10 +1,16 @@
-import { createLogger, format, transports, Logger } from 'winston';
+import { join } from 'node:path';
+
+import { createLogger, format, transports, type Logger } from 'winston';
+
+import { getPlatformPaths } from '@/platform';
+
 const { combine, timestamp, printf, colorize, padLevels, errors, ms } = format;
+
+const paths = getPlatformPaths('pox-bot');
 
 const richConsoleFormat = printf(
     ({ level, message, timestamp, ms, stack, ...metadata }) => {
         const ts = `\x1b[2m${timestamp}\x1b[0m`;
-
         const timeTaken = ms ? ` \x1b[33m${ms}\x1b[0m` : '';
 
         const content = stack || message;
@@ -29,16 +35,18 @@ const logger: Logger = createLogger({
                 richConsoleFormat,
             ),
         }),
+
         new transports.File({
-            filename: 'logs/error.log',
+            filename: join(paths.logs, 'error.log'),
             level: 'error',
             format: combine(
                 timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
                 format.json(),
             ),
         }),
+
         new transports.File({
-            filename: 'logs/combined.log',
+            filename: join(paths.logs, 'combined.log'),
             level: 'debug',
             format: combine(
                 timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
