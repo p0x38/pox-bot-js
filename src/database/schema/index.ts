@@ -1,1 +1,1 @@
-export * from './guilds';
+export { guilds } from './guilds';
