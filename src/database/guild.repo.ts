@@ -1,4 +1,4 @@
-import { GuildSettings } from '@/types/guilds';
+import { GuildSettings } from '@/guilds/types';
 
 import { DEFAULT_GUILD_SETTINGS } from './defaults';
 import { pool } from './pool';
