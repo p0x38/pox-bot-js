@@ -29,6 +29,13 @@
     "engines": {
         "node": ">=18.18"
     },
+    "devEngines": {
+        "runtime": {
+            "name": "node",
+            "version": "24.x",
+            "onFail": "download"
+        }
+    },
     "packageManager": "pnpm@12.3.4",
     "scripts": {
         "clean": "rimraf dist",
