@@ -2,16 +2,24 @@
     "name": "pox-bot",
     "version": "1.1.0",
     "description": "A weird discord bot.",
-    "homepage": "https://github.com/p0x38/poxbot2#readme",
+    "keywords": [
+        "node",
+        "typescript",
+        "pnpm"
+    ],
+    "homepage": "https://github.com/p0x38/pox-bot-js#readme",
     "bugs": {
-        "url": "https://github.com/p0x38/poxbot2/issues"
+        "url": "https://github.com/p0x38/pox-bot-js/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/p0x38/poxbot2.git"
+        "url": "git+https://github.com/p0x38/pox-bot-js.git"
     },
-    "license": "ISC",
-    "author": "p0x38",
+    "license": "MIT",
+    "author": {
+        "name": "p0x38",
+        "url": "https://github.com/p0x38"
+    },
     "type": "module",
     "main": "dist/index.js",
     "files": [
