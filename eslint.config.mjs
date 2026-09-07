@@ -33,7 +33,7 @@ export default tseslint.config([
             'import-x/resolver': {
                 typescript: {
                     alwaysTryTypes: true,
-                    project: ['./tsconfig.json', './tsconfig.test.json'],
+                    project: ['./tsconfig.json'],
                     extensions: [
                         '.ts',
                         '.tsx',

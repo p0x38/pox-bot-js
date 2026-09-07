@@ -40,7 +40,7 @@
     "scripts": {
         "clean": "rimraf dist",
         "prebuild": "pnpm run lint",
-        "build": "pnpm run clean && tsc --noEmit && tsup src/index.ts \"src/commands/**/*.ts\" \"src/events/**/*.ts\" --format esm --clean && shx cp -r src/assets dist/ && shx cp src/config.json dist/",
+        "build": "pnpm run clean && tsc --noEmit && tsup src/index.ts \"src/commands/**/*.ts\" \"src/events/**/*.ts\" --format esm --clean && shx cp -r src/resources dist/",
         "start": "node dist/index.js",
         "dev": "tsx watch src/index.ts",
         "lint": "eslint .",
