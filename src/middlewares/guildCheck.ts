@@ -1,9 +1,10 @@
 import type { TFunction } from 'i18next';
 
+import type { Command } from '@/commands/types';
 import type { Context } from '@/contexts/Context';
 import { NoPrivateMessage } from '@/errors/index';
 
-import type { Command, Middleware } from '@/types';
+import type { Middleware } from './types';
 
 export const guildOnly: Middleware = async (
     ctx: Context,

@@ -1,9 +1,10 @@
 import type { TFunction } from 'i18next';
 
+import type { Command } from '@/commands/types';
 import type { Context } from '@/contexts/Context';
 import logger from '@/logger';
 
-import type { Command, Middleware } from '@/types';
+import type { Middleware } from './types';
 
 export const logging: Middleware = async (
     ctx: Context,

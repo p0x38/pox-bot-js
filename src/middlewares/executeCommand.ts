@@ -3,7 +3,8 @@ import type { TFunction } from 'i18next';
 import { ArgumentParser } from '@/application/parser';
 import type { Command } from '@/commands/types';
 import type { Context } from '@/contexts/Context';
-import type { Middleware } from '@/middlewares/types';
+
+import type { Middleware } from './types';
 
 export const executeCommand: Middleware = async (
     ctx: Context,

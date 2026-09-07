@@ -1,8 +1,9 @@
 import type { TFunction } from 'i18next';
 
+import type { Command } from '@/commands/types';
 import type { Context } from '@/contexts/Context';
 
-import type { Command, Middleware } from '@/types';
+import type { Middleware } from './types';
 
 const stats = new Map<string, { count: number; errors: number }>();
 
