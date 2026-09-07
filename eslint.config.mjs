@@ -9,6 +9,7 @@ export default tseslint.config([
             'dist/',
             '**/*.js',
             'eslint.config.mjs',
+            'drizzle.config.ts',
             '**/.history/',
             '.release-it.ts',
             'tsconfig.json',
