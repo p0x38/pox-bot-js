@@ -1,17 +1,18 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { createMySqlDatabase } from './drivers/mysql';
+import { createPostgresDatabase } from './drivers/postgres';
+import { createSqliteDatabase } from './drivers/sqlite';
+import type { DatabaseConfig } from './config';
+import type { DatabaseConnection } from './drivers/types';
 
-export function createPostgresDatabase(url: string) {
-    const pool = new Pool({
-        connectionString: url,
-    });
+export function createDatabase(config: DatabaseConfig): DatabaseConnection {
+    switch (config.dialect) {
+        case 'postgresql':
+            return createPostgresDatabase(config.url);
 
-    const db = drizzle({
-        client: pool,
-    });
+        case 'mysql':
+            return createMySqlDatabase(config.url);
 
-    return {
-        db,
-        pool,
-    };
+        case 'sqlite':
+            return createSqliteDatabase(config.url);
+    }
 }

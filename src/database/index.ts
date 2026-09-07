@@ -1,9 +1,10 @@
+import { createDatabase } from './connection';
 import { guildRepo } from './guild.repo';
 import { runMigrations } from './migration';
 import { pool } from './pool';
 import { userRepo } from './user.repo';
 
-export { pool, runMigrations };
+export { createDatabase, pool, runMigrations };
 
 export const db = {
     query: (text: string, params?: any[]) => pool.query(text, params),
