@@ -1,6 +1,8 @@
 import { homedir, platform, tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+export const DEFAULT_APP_NAME = 'p0x38/pox-bot-js';
+
 export interface PlatformPaths {
     /** Persistent application data. */
     data: string;
@@ -84,3 +86,5 @@ export function getPlatformPaths(appName: string): PlatformPaths {
         }
     }
 }
+
+export const applicationPaths = getPlatformPaths(DEFAULT_APP_NAME);
