@@ -18,14 +18,16 @@ interface DecoratedCommandConstructorWithMetadata
     [Symbol.metadata]?: Record<PropertyKey, unknown>;
 }
 
-function getMetadata(CommandClass: DecoratedCommandConstructor): Record<PropertyKey, unknown> {
+function getMetadata(
+    CommandClass: DecoratedCommandConstructor,
+): Record<PropertyKey, unknown> {
     return (
         (CommandClass as DecoratedCommandConstructorWithMetadata)[Symbol.metadata] ??
         {}
     );
 }
 
-export interface CommandExtension extends import('./types').Extension {
+export interface CommandExtension extends Extension {
     readonly name: 'commands';
     readonly commands: readonly Command[];
     readonly classes: readonly DecoratedCommandConstructor[];
@@ -69,8 +71,8 @@ export function createCommandExtension(
             usage: commandMetadata.usage,
             ownerOnly: commandMetadata.ownerOnly,
             guildOnly: commandMetadata.guildOnly,
-            permissions: commandMetadata.permissions,
-            botPermissions: commandMetadata.botPermissions,
+            permissions: commandMetadata.permissions as Command['permissions'],
+            botPermissions: commandMetadata.botPermissions as Command['botPermissions'],
             cooldown: commandMetadata.cooldown,
             execute: execute.bind(instance) as Command['execute'],
         });
