@@ -1,6 +1,6 @@
-import type { Extension } from './types';
+import type { Extension, ExtensionManagerLike } from './types';
 
-export class ExtensionManager {
+export class ExtensionManager implements ExtensionManagerLike {
     readonly #extensions = new Map<string, Extension>();
 
     get size(): number {
@@ -19,7 +19,6 @@ export class ExtensionManager {
         if (this.#extensions.has(extension.name)) {
             throw new Error(`Extension already registered: ${extension.name}`);
         }
-
         this.#extensions.set(extension.name, extension);
     }
 
@@ -31,7 +30,6 @@ export class ExtensionManager {
 
     async teardownAll(): Promise<void> {
         const extensions = [...this.#extensions.values()].reverse();
-
         for (const extension of extensions) {
             await extension.teardown?.(this);
         }
