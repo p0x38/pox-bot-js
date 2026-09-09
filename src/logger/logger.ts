@@ -3,13 +3,11 @@ import { join } from 'node:path';
 
 import { createLogger, format, transports, type Logger } from 'winston';
 
-import { getPlatformPaths } from '@/platform';
+import { applicationPaths } from '@/platform';
 
 const { combine, timestamp, printf, colorize, padLevels, errors, ms } = format;
 
-const paths = getPlatformPaths('pox-bot');
-
-mkdirSync(paths.logs, { recursive: true });
+mkdirSync(applicationPaths.logs, { recursive: true });
 
 const richConsoleFormat = printf(
     ({ level, message, timestamp, ms, stack, ...metadata }) => {
@@ -40,7 +38,7 @@ const logger: Logger = createLogger({
         }),
 
         new transports.File({
-            filename: join(paths.logs, 'error.log'),
+            filename: join(applicationPaths.logs, 'error.log'),
             level: 'error',
             format: combine(
                 timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
@@ -49,7 +47,7 @@ const logger: Logger = createLogger({
         }),
 
         new transports.File({
-            filename: join(paths.logs, 'combined.log'),
+            filename: join(applicationPaths.logs, 'combined.log'),
             level: 'debug',
             format: combine(
                 timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
