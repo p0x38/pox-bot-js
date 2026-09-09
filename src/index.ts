@@ -7,10 +7,10 @@ import { Command } from '@/commands/types';
 import { ConfigManager, type Config } from '@/config';
 import { ContextServicesMetadata } from '@/contexts/ContextServicesMetadata';
 import { db } from '@/database';
-import { ExtensionManager } from '@/managers/extension';
 import i18n from '@/i18n';
 import 'dotenv/config';
 import { logger } from '@/logger';
+import { ExtensionManager } from '@/managers/extension';
 import { commandTracker } from '@/services/commandTracker.service';
 import * as xpService from '@/services/xpService';
 

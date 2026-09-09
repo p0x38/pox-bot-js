@@ -1,7 +1,4 @@
-import {
-    DEFAULT_BOT_PREFIX,
-    DEFAULT_LANGUAGE,
-} from '@/config/defaults';
+import { DEFAULT_BOT_PREFIX, DEFAULT_LANGUAGE } from '@/config/defaults';
 import type { GuildSettings } from '@/guilds/types';
 
 export const DEFAULT_GUILD_SETTINGS: GuildSettings = {

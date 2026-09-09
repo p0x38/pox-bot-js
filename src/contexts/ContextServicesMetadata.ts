@@ -1,10 +1,11 @@
+import type { Logger } from 'winston';
+
 import type { Config, ConfigManager } from '@/config';
 import type { db } from '@/database';
 import type i18n from '@/i18n';
 import type { ExtensionManager } from '@/managers/extension';
 import type { commandTracker } from '@/services/commandTracker.service';
 import type * as xpService from '@/services/xpService';
-import type { Logger } from 'winston';
 
 export interface ContextServicesMetadataOptions {
     config: Config;
