@@ -1,14 +1,14 @@
 import { Pool } from 'pg';
 
-import 'dotenv/config';
+import { env } from '@/config/env';
 import { logger } from '@/logger';
 
 export const pool = new Pool({
-    host: process.env.PGHOST,
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD,
-    database: process.env.PGDATABASE,
-    port: parseInt(process.env.PGPORT || '5432'),
+    host: env.postgresHost(),
+    user: env.postgresUser(),
+    password: env.postgresPassword(),
+    database: env.postgresDatabase(),
+    port: env.postgresPort(),
 });
 
 pool.on('connect', () => {
