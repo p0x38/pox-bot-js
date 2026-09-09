@@ -1,9 +1,8 @@
 import type { Command } from '@/commands/types';
+
+import { getCommandMetadata, getCommandMethodMetadata } from '@/decorators';
+
 import type { Extension } from './types';
-import {
-    getCommandMetadata,
-    getCommandMethodMetadata,
-} from '@/decorators';
 
 export interface DecoratedCommandConstructor {
     new (...args: never[]): object;
@@ -49,23 +48,24 @@ export function createCommandExtension(
         }
 
         const methodMetadata = getCommandMethodMetadata(metadata);
+        const executeMetadata = methodMetadata.find((method) => method.execute);
 
-        if (!methodMetadata?.execute) {
+        if (!executeMetadata) {
             throw new TypeError(
                 `Command class ${CommandClass.name || '<anonymous>'} is missing @Execute`,
             );
         }
 
         const instance = new CommandClass() as DecoratedCommandInstance;
-        const execute = instance[methodMetadata.execute];
+        const execute = instance[executeMetadata.method];
 
         if (typeof execute !== 'function') {
             throw new TypeError(
-                `@Execute target ${String(methodMetadata.execute)} is not a function`,
+                `@Execute target ${String(executeMetadata.method)} is not a function`,
             );
         }
 
-        commands.push({
+        const command: Command = {
             name: commandMetadata.name,
             description: commandMetadata.description,
             usage: commandMetadata.usage,
@@ -75,7 +75,22 @@ export function createCommandExtension(
             botPermissions: commandMetadata.botPermissions as Command['botPermissions'],
             cooldown: commandMetadata.cooldown,
             execute: execute.bind(instance) as Command['execute'],
-        });
+        };
+
+        const autocompleteMetadata = methodMetadata.find(
+            (method) => method.autocomplete,
+        );
+        if (autocompleteMetadata) {
+            const autocomplete = instance[autocompleteMetadata.method];
+            if (typeof autocomplete !== 'function') {
+                throw new TypeError(
+                    `@autocomplete target ${String(autocompleteMetadata.method)} is not a function`,
+                );
+            }
+            command.autocomplete = autocomplete.bind(instance) as Command['autocomplete'];
+        }
+
+        commands.push(command);
     }
 
     return {
