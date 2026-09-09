@@ -71,6 +71,14 @@ export class Context {
         return this.metadata.locale;
     }
 
+    get config() {
+        return this.services.config;
+    }
+
+    get configManager() {
+        return this.services.configManager;
+    }
+
     get personality(): Personality {
         return this.metadata.personality;
     }
