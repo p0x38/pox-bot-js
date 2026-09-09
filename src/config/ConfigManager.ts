@@ -1,15 +1,13 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-import { getPlatformPaths } from '@/platform';
+import { DEFAULT_APP_NAME, getPlatformPaths } from '@/platform';
 
 export interface Config {
     bot_prefix: string;
     defaultLanguage: string;
     ownerId: string;
 }
-
-export const DEFAULT_APP_NAME = 'p0x38/pox-bot-js';
 
 export class ConfigManager {
     private readonly path: string;
