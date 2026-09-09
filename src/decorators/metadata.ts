@@ -1,6 +1,10 @@
 import type { CommandMetadata } from './types';
 
-Symbol.metadata ??= Symbol('Symbol.metadata');
+if (!Symbol.metadata) {
+    Object.defineProperty(Symbol, 'metadata', {
+        value: Symbol('Symbol.metadata'),
+    });
+}
 
 const commandMetadataKey = Symbol('pox-bot.command');
 const commandMethodsMetadataKey = Symbol('pox-bot.command-methods');
