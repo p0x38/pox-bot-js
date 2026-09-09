@@ -53,7 +53,9 @@ export function createCogExtension(
 
         const execute = instance[commandMetadata.method];
         if (typeof execute !== 'function') {
-            throw new TypeError(`@command target ${String(commandMetadata.method)} is not a function`);
+            throw new TypeError(
+                `@command target ${String(commandMetadata.method)} is not a function`,
+            );
         }
 
         const command: Command = {
@@ -69,9 +71,11 @@ export function createCogExtension(
         };
 
         if (commandMetadata.autocomplete) {
-            const autocomplete = instance[commandMetadata.autocomplete];
+            const autocomplete = instance[commandMetadata.method];
             if (typeof autocomplete !== 'function') {
-                throw new TypeError(`@autocomplete target ${String(commandMetadata.autocomplete)} is not a function`);
+                throw new TypeError(
+                    `@autocomplete target ${String(commandMetadata.method)} is not a function`,
+                );
             }
             command.autocomplete = autocomplete.bind(instance) as Command['autocomplete'];
         }
@@ -83,17 +87,19 @@ export function createCogExtension(
         for (const listener of getListenerMethodMetadata(metadata)) {
             const handler = instance[listener.method];
             if (typeof handler !== 'function') {
-                throw new TypeError(`@listener target ${String(listener.method)} is not a function`);
+                throw new TypeError(
+                    `@listener target ${String(listener.method)} is not a function`,
+                );
             }
-            const bound = handler.bind(instance) as (...args: never[]) => unknown;
-            if (listener.once) client.once(listener.event, bound);
-            else client.on(listener.event, bound);
+            const bound = handler.bind(instance) as (...args: any[]) => void;
+            if (listener.once) client.once(listener.event as keyof import('discord.js').ClientEvents, bound);
+            else client.on(listener.event as keyof import('discord.js').ClientEvents, bound);
         }
     }
 
     return {
         name: cogMetadata.name,
-        cog: instance as Cog,
+        cog: instance as unknown as Cog,
         commands,
     };
 }
