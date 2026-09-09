@@ -5,10 +5,10 @@ import { Client, GatewayIntentBits, Collection } from 'discord.js';
 
 import { Command } from '@/commands/types';
 import { ConfigManager, type Config } from '@/config';
+import { env } from '@/config/env';
 import { ContextServicesMetadata } from '@/contexts/ContextServicesMetadata';
 import { db } from '@/database';
 import i18n from '@/i18n';
-import 'dotenv/config';
 import { logger } from '@/logger';
 import { ExtensionManager } from '@/managers/extension';
 import { commandTracker } from '@/services/commandTracker.service';
@@ -169,7 +169,7 @@ async function bootstrap() {
         }
 
         await extensionManager.setupAll();
-        await client.login(process.env.DISCORD_TOKEN);
+        await client.login(env.discordToken());
     } catch (error) {
         logger.error('Failed to start the bot:', error);
         await shutdown('bootstrap failure', 1);
