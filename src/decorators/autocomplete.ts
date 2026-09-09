@@ -1,4 +1,4 @@
-import { setCommandMethodMetadata } from './metadata';
+import { addCommandMethodMetadata } from './metadata';
 
 export function autocomplete(
     _target: unknown,
@@ -8,7 +8,8 @@ export function autocomplete(
         throw new TypeError('@autocomplete cannot decorate a static method');
     }
 
-    setCommandMethodMetadata(context.metadata as Record<PropertyKey, unknown>, {
-        autocomplete: context.name,
+    addCommandMethodMetadata(context.metadata as Record<PropertyKey, unknown>, {
+        method: context.name,
+        autocomplete: true,
     });
 }
