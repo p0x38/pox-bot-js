@@ -2,7 +2,6 @@ import { EmbedBuilder } from 'discord.js';
 import { TFunction } from 'i18next';
 
 import type { Context } from '@/contexts/Context';
-import { logger } from '@/logger';
 
 import { BotError } from './index';
 
@@ -15,7 +14,7 @@ export class ErrorHandler {
     ) {
         const err = error instanceof Error ? error : new Error(String(error));
 
-        logger.error('Command error:', {
+        context.services.logger.error('Command error:', {
             message: err.message,
             stack: err.stack,
             user: context.user.id,
@@ -46,7 +45,10 @@ export class ErrorHandler {
                 ephemeral: true,
             });
         } catch (replyError) {
-            logger.error('Failed to send error response:', replyError);
+            context.services.logger.error(
+                'Failed to send error response:',
+                replyError,
+            );
         }
     }
 }
