@@ -1,5 +1,4 @@
 import type { Command } from '@/commands/types';
-
 import { getCommandMetadata, getCommandMethodMetadata } from '@/decorators';
 
 import type { Extension } from './types';
@@ -12,8 +11,7 @@ interface DecoratedCommandInstance {
     [key: string | symbol]: unknown;
 }
 
-interface DecoratedCommandConstructorWithMetadata
-    extends DecoratedCommandConstructor {
+interface DecoratedCommandConstructorWithMetadata extends DecoratedCommandConstructor {
     [Symbol.metadata]?: Record<PropertyKey, unknown>;
 }
 
@@ -21,8 +19,9 @@ function getMetadata(
     CommandClass: DecoratedCommandConstructor,
 ): Record<PropertyKey, unknown> {
     return (
-        (CommandClass as DecoratedCommandConstructorWithMetadata)[Symbol.metadata] ??
-        {}
+        (CommandClass as DecoratedCommandConstructorWithMetadata)[
+            Symbol.metadata
+        ] ?? {}
     );
 }
 
@@ -72,7 +71,8 @@ export function createCommandExtension(
             ownerOnly: commandMetadata.ownerOnly,
             guildOnly: commandMetadata.guildOnly,
             permissions: commandMetadata.permissions as Command['permissions'],
-            botPermissions: commandMetadata.botPermissions as Command['botPermissions'],
+            botPermissions:
+                commandMetadata.botPermissions as Command['botPermissions'],
             cooldown: commandMetadata.cooldown,
             execute: execute.bind(instance) as Command['execute'],
         };
@@ -87,7 +87,9 @@ export function createCommandExtension(
                     `@autocomplete target ${String(autocompleteMetadata.method)} is not a function`,
                 );
             }
-            command.autocomplete = autocomplete.bind(instance) as Command['autocomplete'];
+            command.autocomplete = autocomplete.bind(
+                instance,
+            ) as Command['autocomplete'];
         }
 
         commands.push(command);
