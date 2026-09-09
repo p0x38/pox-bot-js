@@ -1,5 +1,7 @@
 import type { CommandMetadata } from './types';
 
+Symbol.metadata ??= Symbol('Symbol.metadata');
+
 const commandMetadataKey = Symbol('pox-bot.command');
 const commandMethodsMetadataKey = Symbol('pox-bot.command-methods');
 const cogMetadataKey = Symbol('pox-bot.cog');
