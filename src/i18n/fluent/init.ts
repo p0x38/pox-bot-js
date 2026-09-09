@@ -1,8 +1,10 @@
-import { join } from 'node:path';
-import { getCache } from '../cache.js';
 import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { FluentBundle, FluentResource } from '@fluent/bundle';
-import { getLocalePath, getFluentPath } from '../paths.js';
+
+import { getCache } from '../cache.js';
+import { getFluentPath } from '../paths.js';
 
 export function getBundle(locale: string) {
     return getCache(`fluent:${locale}`, () => {

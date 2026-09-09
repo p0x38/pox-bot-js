@@ -1,7 +1,9 @@
-import logger from '@/logger';
-import type { Context } from '@/contexts/Context';
-import type { Command, Middleware } from '@/types';
 import type { TFunction } from 'i18next';
+
+import type { Command } from '@/commands/types';
+import type { Context } from '@/contexts/Context';
+
+import type { Middleware } from './types';
 
 export const logging: Middleware = async (
     ctx: Context,
@@ -24,9 +26,9 @@ export const logging: Middleware = async (
         };
 
         if (duration > 2000) {
-            logger.warn('Slow command', base);
+            ctx.services.logger.warn('Slow command', base);
         } else {
-            logger.info('Command executed', base);
+            ctx.services.logger.info('Command executed', base);
         }
     }
 };

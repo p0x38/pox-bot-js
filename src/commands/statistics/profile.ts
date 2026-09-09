@@ -7,11 +7,13 @@ import {
     GuildMember,
     SlashCommandBuilder,
 } from 'discord.js';
-import { db } from '@/databases';
-import { Command } from '@/types';
+
+import type { Context } from '@/contexts/Context';
+import { db } from '@/database';
 import { TFunction } from '@/i18n/fluent/t';
 import { Experience } from '@/services/experience.service';
-import type { Context } from '@/contexts/Context';
+
+import { Command } from '../types';
 
 const name = 'profile';
 const description = 'Check user profile and level.';

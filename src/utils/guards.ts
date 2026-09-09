@@ -1,5 +1,10 @@
-import { GuildMember, Message, PermissionResolvable } from 'discord.js';
-import config from '../config.json';
+import {
+    GuildMember,
+    Message,
+    PermissionResolvable,
+} from 'discord.js';
+
+import type { Context } from '@/contexts/Context';
 import {
     BotMissingPermissions,
     CommandDisabled,
@@ -7,16 +12,15 @@ import {
     NoPrivateMessage,
     NotOwner,
 } from '@/errors/index';
-import type { Context } from '@/contexts/Context';
 
 function getUser(context: Context) {
-    return context instanceof Message ? context.author : context.user;
+    return context.user;
 }
 
 function getMember(context: Context): GuildMember | null {
     if (!context.guild) return null;
 
-    if (context instanceof Message) {
+    if (context.raw instanceof Message) {
         return context.member;
     }
 
@@ -38,7 +42,7 @@ export class Guards {
     static ownerOnly(context: Context) {
         const user = getUser(context);
 
-        if (user.id !== config.ownerId) {
+        if (user.id !== context.config.ownerId) {
             throw new NotOwner();
         }
     }

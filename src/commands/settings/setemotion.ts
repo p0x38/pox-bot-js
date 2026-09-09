@@ -1,9 +1,11 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import { db } from '../../databases';
-import { TFunction } from '@/i18n/fluent/t';
-import { Command } from '../../types';
+
 import type { Context } from '@/contexts/Context';
+import { db } from '@/database';
 import { EmotionType } from '@/i18n/context/types';
+import { TFunction } from '@/i18n/fluent/t';
+
+import { Command } from '../types';
 
 const name = 'setemotion';
 const description = "Change the bot's emotion for this server.";

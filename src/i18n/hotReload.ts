@@ -1,7 +1,10 @@
-import logger from '@/logger.js';
-import { getLocalePath } from './paths.js';
-import chokidar from 'chokidar';
 import { basename } from 'node:path';
+
+import chokidar from 'chokidar';
+
+import { logger } from '@/logger';
+
+import { getLocalePath } from './paths.js';
 
 export function enableLocaleHotReload(clearCache: () => void) {
     const localesPath = getLocalePath();

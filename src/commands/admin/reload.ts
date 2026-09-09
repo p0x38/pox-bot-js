@@ -1,13 +1,15 @@
-import { SlashCommandBuilder } from 'discord.js';
-import { TFunction } from '@/i18n/fluent/t';
-import i18next from 'i18next';
-import path from 'node:path';
-import logger from '../../logger';
 import { readdirSync } from 'node:fs';
-import { Command } from '../../types';
-import type { Context } from '@/contexts/Context';
+import path from 'node:path';
 
+import { SlashCommandBuilder } from 'discord.js';
+import i18next from 'i18next';
+
+import type { Context } from '@/contexts/Context';
 import { clearCache } from '@/i18n/cache';
+import { TFunction } from '@/i18n/fluent/t';
+import { logger } from '@/logger';
+
+import { Command } from '../types';
 
 const name = 'reload';
 const description = 'Reloads commands.';

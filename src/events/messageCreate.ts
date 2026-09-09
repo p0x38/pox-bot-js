@@ -1,21 +1,19 @@
 import { Collection, Events, Message } from 'discord.js';
+
+import runCommand from '@/application/runCommand';
+import { Command } from '@/commands/types';
+
 import { BotEvent } from './event';
-import { Command } from '../types';
-import { db } from '../databases';
-import config from '../config.json';
-import logger from '../logger';
-import runCommand from '../core/runCommand';
-import i18next from 'i18next';
-import * as xpService from '../services/xpService';
 
 const event: BotEvent<Events.MessageCreate> = {
     name: Events.MessageCreate,
     async execute(message: Message, commands: Collection<string, Command>) {
         if (message.author.bot) return;
 
+        const { config, db, i18n, logger, xpService } = message.client.services;
         const userSettings = await db.getUserSettings(message.author.id);
-        const lang = userSettings.language || 'en';
-        const t = i18next.getFixedT(lang);
+        const lang = userSettings.language || config.defaultLanguage;
+        const t = i18n.getFixedT(lang);
 
         const isCommand = message.content.startsWith(config.bot_prefix);
 
@@ -49,7 +47,7 @@ const event: BotEvent<Events.MessageCreate> = {
         if (!command) return;
 
         try {
-            await runCommand(message, command);
+            await runCommand(message, command, message.client.services);
         } catch (err) {
             logger.error(`Command execution failed for ${commandName}:`, err);
         }

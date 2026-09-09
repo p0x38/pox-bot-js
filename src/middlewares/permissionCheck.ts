@@ -1,7 +1,10 @@
-import type { Context } from '@/contexts/Context';
-import type { Command, Middleware } from '@/types';
-import { MissingPermissions } from '@/errors/index';
 import type { TFunction } from 'i18next';
+
+import type { Command } from '@/commands/types';
+import type { Context } from '@/contexts/Context';
+import { MissingPermissions } from '@/errors/index';
+
+import type { Middleware } from './types';
 
 export const permissions: Middleware = async (
     ctx: Context,

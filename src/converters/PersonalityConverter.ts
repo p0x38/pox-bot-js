@@ -1,6 +1,7 @@
-import { PersonalityTone } from '@/i18n/context/types';
-import { BaseConverter, ConversionError } from './BaseConverter';
 import { Context } from '@/contexts/Context';
+import { PersonalityTone } from '@/i18n/context/types';
+
+import { BaseConverter, ConversionError } from './BaseConverter';
 
 export class PersonalityToneConverter extends BaseConverter<PersonalityTone> {
     readonly name = 'PersonalityTone';

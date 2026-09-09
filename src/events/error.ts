@@ -1,6 +1,8 @@
 import { Events } from 'discord.js';
+
+import { logger } from '@/logger';
+
 import { BotEvent } from './event';
-import logger from '../logger';
 
 const event: BotEvent<Events.Error> = {
     name: Events.Error,

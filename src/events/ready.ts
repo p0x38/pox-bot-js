@@ -1,9 +1,11 @@
 import { Client, Collection, Events, REST, Routes } from 'discord.js';
-import { BotEvent } from './event';
-import { Command } from '../types';
-import logger from '../logger';
-import i18n from '../i18n';
+
+import { Command } from '@/commands/types';
+import i18n from '@/i18n';
 import { localizeCommand } from '@/i18n/translator';
+import { logger } from '@/logger';
+
+import { BotEvent } from './event';
 
 const event: BotEvent<Events.ClientReady> = {
     name: Events.ClientReady,

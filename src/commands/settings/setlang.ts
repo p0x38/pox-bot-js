@@ -1,10 +1,12 @@
 import { AutocompleteInteraction, SlashCommandBuilder } from 'discord.js';
-import { db } from '../../databases';
-import { TFunction } from '@/i18n/fluent/t';
-import { Command } from '../../types';
-import i18n, { languages } from '../../i18n';
-import { normalizeLangName } from '../../utils/langUtils';
+
 import type { Context } from '@/contexts/Context';
+import { db } from '@/database';
+import i18n, { languages } from '@/i18n';
+import { TFunction } from '@/i18n/fluent/t';
+import { normalizeLangName } from '@/utils/langUtils';
+
+import { Command } from '../types';
 
 const name = 'setlang';
 const description = 'Change your display language.';

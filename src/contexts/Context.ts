@@ -1,4 +1,3 @@
-import { RawContext } from '@/types/index';
 import {
     Message,
     ChatInputCommandInteraction,
@@ -13,9 +12,13 @@ import {
     type TextBasedChannel,
     type Client,
 } from 'discord.js';
+
+import { RawContext } from '@/commands/types';
 import type { CommandContext } from '@/i18n/context/command';
-import type { ContextMetadata } from './ContextMetadata';
 import type { EmotionType, Personality } from '@/i18n/context/types';
+
+import type { ContextMetadata } from './ContextMetadata';
+import type { ContextServicesMetadata } from './ContextServicesMetadata';
 
 type ReplyOptions = {
     content?: string;
@@ -48,19 +51,32 @@ export function resolveLocale(raw: RawContext, dbLocale?: string): string {
 export class Context {
     public readonly raw: RawContext;
     public readonly metadata: ContextMetadata;
+    public readonly services: ContextServicesMetadata;
 
-    constructor(ctx: RawContext, metadata: ContextMetadata) {
+    constructor(
+        ctx: RawContext,
+        metadata: ContextMetadata,
+        services: ContextServicesMetadata,
+    ) {
         if (ctx instanceof Context) {
             throw new Error('Context cannot wrap another Context');
         }
 
         this.raw = ctx;
-
         this.metadata = metadata;
+        this.services = services;
     }
 
     get locale(): string {
         return this.metadata.locale;
+    }
+
+    get config() {
+        return this.services.config;
+    }
+
+    get configManager() {
+        return this.services.configManager;
     }
 
     get personality(): Personality {

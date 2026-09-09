@@ -1,5 +1,6 @@
 import { ClientEvents, Collection } from 'discord.js';
-import { Command } from '../types';
+
+import { Command } from '@/commands/types';
 
 export interface BotEvent<T extends keyof ClientEvents> {
     name: T;

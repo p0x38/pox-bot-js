@@ -1,8 +1,10 @@
-import type { Context } from '@/contexts/Context';
-import type { Command, Middleware } from '@/types';
 import type { TFunction } from 'i18next';
-import config from '@/config.json';
+
+import type { Command } from '@/commands/types';
+import type { Context } from '@/contexts/Context';
 import { NotOwner } from '@/errors/index';
+
+import type { Middleware } from './types';
 
 export const ownerOnly: Middleware = async (
     ctx: Context,
@@ -12,7 +14,7 @@ export const ownerOnly: Middleware = async (
 ) => {
     if (!command.ownerOnly) return next();
 
-    if (ctx.user.id !== config.ownerId) {
+    if (ctx.user.id !== ctx.config.ownerId) {
         throw new NotOwner();
     }
 

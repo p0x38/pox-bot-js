@@ -1,32 +1,78 @@
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
-import path from 'node:path';
 import { readdirSync, statSync } from 'node:fs';
-import i18n from './i18n';
-import 'dotenv/config';
-import logger from './logger';
-import { Command } from './types';
-import { writeFileSync, readFileSync, unlinkSync, existsSync } from 'node:fs';
-import { db } from './databases';
+import path from 'node:path';
 
-const LOCK_FILE = path.join(process.cwd(), '.bot.lock');
+import { Client, GatewayIntentBits, Collection } from 'discord.js';
 
-// Check for existing instance
-if (existsSync(LOCK_FILE)) {
-    try {
-        const pid = parseInt(readFileSync(LOCK_FILE, 'utf8'));
-        process.kill(pid, 0); // Check if process is still running
-        logger.error(
-            `Bot is already running with PID ${pid}. Exiting to prevent duplication.`,
-        );
-        process.exit(1);
-    } catch (e) {
-        // Process is dead, we can take over the lock
-        unlinkSync(LOCK_FILE);
-    }
+import { Command } from '@/commands/types';
+import { ConfigManager, type Config } from '@/config';
+import { env } from '@/config/env';
+import { ContextServicesMetadata } from '@/contexts/ContextServicesMetadata';
+import { db } from '@/database';
+import i18n from '@/i18n';
+import { logger } from '@/logger';
+import { ExtensionManager } from '@/managers/extension';
+import { commandTracker } from '@/services/commandTracker.service';
+import * as xpService from '@/services/xpService';
+
+import { InstanceLock } from './application/InstanceLock';
+
+const lock = new InstanceLock();
+const configManager = new ConfigManager();
+const extensionManager = new ExtensionManager();
+
+try {
+    await lock.acquire();
+} catch (error) {
+    logger.error('Failed to acquire instance lock:', error);
+    process.exit(1);
 }
 
-// Create lock
-writeFileSync(LOCK_FILE, process.pid.toString());
+let shuttingDown = false;
+let config: Config;
+
+const shutdown = async (signal: string, exitCode = 0) => {
+    if (shuttingDown) {
+        return;
+    }
+
+    shuttingDown = true;
+
+    logger.info(`Received ${signal}, shutting down...`);
+
+    try {
+        await extensionManager.teardownAll();
+        client.destroy();
+        await lock.release();
+        await db.pool.end();
+
+        logger.info('Shutdown complete.');
+    } catch (error) {
+        logger.error('Error during shutdown:', error);
+        exitCode = 1;
+    }
+
+    process.exit(exitCode);
+};
+
+process.once('SIGINT', () => {
+    void shutdown('SIGINT');
+});
+
+process.once('SIGTERM', () => {
+    void shutdown('SIGTERM');
+});
+
+process.once('uncaughtException', (error) => {
+    logger.error('Fatal error raised:', error);
+
+    void shutdown('uncaughtException', 1);
+});
+
+process.once('unhandledRejection', (error) => {
+    logger.error('Unhandled rejection raised:', error);
+
+    void shutdown('unhandledRejection', 1);
+});
 
 const client = new Client({
     intents: [
@@ -38,8 +84,9 @@ const client = new Client({
 
 const commands = new Collection<string, Command>();
 
-(client as any).commands = commands;
-(client as any).i18n = i18n;
+client.commands = commands;
+client.i18n = i18n;
+client.configManager = configManager;
 
 const commandsPath = path.join(import.meta.dirname, 'commands');
 const eventsPath = path.join(import.meta.dirname, 'events');
@@ -63,7 +110,7 @@ async function loadCommands(dir: string) {
                 const command: Command = commandModule.default || commandModule;
 
                 if (command && command.name) {
-                    (client as any).commands.set(command.name, command);
+                    client.commands.set(command.name, command);
                 }
             } catch (error) {
                 logger.error(`Failed to load command at ${fullPath}:`, error);
@@ -71,41 +118,39 @@ async function loadCommands(dir: string) {
         }
     }
 }
-// loadCommands(commandsPath); // Redundant, called in bootstrap
-
-const gratefulShutdown = async () => {
-    console.log('Shutdowning the bot...');
-    if (existsSync(LOCK_FILE)) unlinkSync(LOCK_FILE);
-    await db.pool.end();
-    process.exit(0);
-};
-
-process.on('uncaughtException', (err) => {
-    logger.error('Fatal error raised:', err);
-
-    setTimeout(() => process.exit(1), 1000);
-});
-
-process.on('unhandledRejection', (error) => {
-    logger.error('Unhandled rejection raised:', error);
-});
-
-process.on('SIGINT', gratefulShutdown);
-process.on('SIGTERM', gratefulShutdown);
 
 async function bootstrap() {
     try {
-        logger.info('Loading commands...');
-        await loadCommands(commandsPath);
+        logger.info('Loading configuration...');
+        config = await configManager.load();
+
+        client.config = config;
+        client.services = new ContextServicesMetadata({
+            config,
+            configManager,
+            db,
+            i18n,
+            logger,
+            extensionManager,
+            commandTracker,
+            xpService,
+        });
+
+        logger.info(`Using configuration from ${configManager.getPath()}`);
+        logger.info(`Default language: ${config.defaultLanguage}`);
 
         logger.info('Running database migrations...');
         await db.runMigrations();
+
+        logger.info('Loading commands...');
+        await loadCommands(commandsPath);
 
         const eventFiles = readdirSync(eventsPath).filter(
             (file) =>
                 (file.endsWith('.ts') || file.endsWith('.js')) &&
                 !file.endsWith('.d.ts'),
         );
+
         for (const file of eventFiles) {
             const filePath = path.join(eventsPath, file);
             const module = await import(`file://${filePath}`);
@@ -124,10 +169,11 @@ async function bootstrap() {
             }
         }
 
-        await client.login(process.env.DISCORD_TOKEN);
+        await extensionManager.setupAll();
+        await client.login(env.discordToken());
     } catch (error) {
         logger.error('Failed to start the bot:', error);
-        process.exit(1);
+        await shutdown('bootstrap failure', 1);
     }
 }
 
