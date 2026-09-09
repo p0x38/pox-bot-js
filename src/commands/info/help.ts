@@ -46,7 +46,7 @@ export const help: Command = {
         };
 
         const response = await message.reply({
-            embeds: [helpView.getPage(currentPage)],
+            content: helpView.getPage(currentPage),
             components: maxPages > 1 ? [getButtons(currentPage)] : [],
         });
 
@@ -58,8 +58,7 @@ export const help: Command = {
         });
 
         collector.on('collect', async (i) => {
-            const userId =
-                'author' in message ? message.user.id : message.user.id;
+            const userId = message.user.id;
             if (i.user.id !== userId) {
                 await i.reply({
                     content: 'Only the command user can flip pages.',
@@ -72,7 +71,7 @@ export const help: Command = {
             else if (i.customId === 'next') currentPage++;
 
             await i.update({
-                embeds: [helpView.getPage(currentPage)],
+                content: helpView.getPage(currentPage),
                 components: [getButtons(currentPage)],
             });
         });
