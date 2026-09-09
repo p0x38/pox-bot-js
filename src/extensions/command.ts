@@ -1,6 +1,5 @@
 import type { Command } from '@/commands/types';
 import type { Extension } from './types';
-import type { ExtensionManager } from './manager';
 import {
     getCommandMetadata,
     getCommandMethodMetadata,
@@ -19,7 +18,14 @@ interface DecoratedCommandConstructorWithMetadata
     [Symbol.metadata]?: Record<PropertyKey, unknown>;
 }
 
-export interface CommandExtension extends Extension {
+function getMetadata(CommandClass: DecoratedCommandConstructor): Record<PropertyKey, unknown> {
+    return (
+        (CommandClass as DecoratedCommandConstructorWithMetadata)[Symbol.metadata] ??
+        {}
+    );
+}
+
+export interface CommandExtension extends import('./types').Extension {
     readonly name: 'commands';
     readonly commands: readonly Command[];
     readonly classes: readonly DecoratedCommandConstructor[];
@@ -31,19 +37,16 @@ export function createCommandExtension(
     const commands: Command[] = [];
 
     for (const CommandClass of classes) {
-        const metadata = getCommandMetadata(
-            CommandClass as DecoratedCommandConstructorWithMetadata,
-        );
+        const metadata = getMetadata(CommandClass);
+        const commandMetadata = getCommandMetadata(metadata);
 
-        if (!metadata) {
+        if (!commandMetadata) {
             throw new TypeError(
                 `Command class ${CommandClass.name || '<anonymous>'} is missing @Command`,
             );
         }
 
-        const methodMetadata = getCommandMethodMetadata(
-            CommandClass as DecoratedCommandConstructorWithMetadata,
-        );
+        const methodMetadata = getCommandMethodMetadata(metadata);
 
         if (!methodMetadata?.execute) {
             throw new TypeError(
@@ -61,14 +64,14 @@ export function createCommandExtension(
         }
 
         commands.push({
-            name: metadata.name,
-            description: metadata.description,
-            usage: metadata.usage,
-            ownerOnly: metadata.ownerOnly,
-            guildOnly: metadata.guildOnly,
-            permissions: metadata.permissions,
-            botPermissions: metadata.botPermissions,
-            cooldown: metadata.cooldown,
+            name: commandMetadata.name,
+            description: commandMetadata.description,
+            usage: commandMetadata.usage,
+            ownerOnly: commandMetadata.ownerOnly,
+            guildOnly: commandMetadata.guildOnly,
+            permissions: commandMetadata.permissions,
+            botPermissions: commandMetadata.botPermissions,
+            cooldown: commandMetadata.cooldown,
             execute: execute.bind(instance) as Command['execute'],
         });
     }
