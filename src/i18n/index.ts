@@ -1,4 +1,5 @@
 import { DEFAULT_LANGUAGE } from '@/config/defaults';
+
 import { getLanguages, getReferenceLang, getNamespaces } from './discovery';
 import { initI18n } from './init';
 import { getLocalePath } from './paths';
