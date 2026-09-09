@@ -5,15 +5,20 @@ import { Client, GatewayIntentBits, Collection } from 'discord.js';
 
 import { Command } from '@/commands/types';
 import { ConfigManager, type Config } from '@/config';
+import { ContextServicesMetadata } from '@/contexts/ContextServicesMetadata';
 import { db } from '@/database';
+import { ExtensionManager } from '@/managers/extension';
 import i18n from '@/i18n';
 import 'dotenv/config';
 import { logger } from '@/logger';
+import { commandTracker } from '@/services/commandTracker.service';
+import * as xpService from '@/services/xpService';
 
 import { InstanceLock } from './application/InstanceLock';
 
 const lock = new InstanceLock();
 const configManager = new ConfigManager();
+const extensionManager = new ExtensionManager();
 
 try {
     await lock.acquire();
@@ -35,6 +40,7 @@ const shutdown = async (signal: string, exitCode = 0) => {
     logger.info(`Received ${signal}, shutting down...`);
 
     try {
+        await extensionManager.teardownAll();
         await lock.release();
         await db.pool.end();
 
@@ -77,9 +83,9 @@ const client = new Client({
 
 const commands = new Collection<string, Command>();
 
-(client as any).commands = commands;
-(client as any).i18n = i18n;
-(client as any).configManager = configManager;
+client.commands = commands;
+client.i18n = i18n;
+client.configManager = configManager;
 
 const commandsPath = path.join(import.meta.dirname, 'commands');
 const eventsPath = path.join(import.meta.dirname, 'events');
@@ -103,7 +109,7 @@ async function loadCommands(dir: string) {
                 const command: Command = commandModule.default || commandModule;
 
                 if (command && command.name) {
-                    (client as any).commands.set(command.name, command);
+                    client.commands.set(command.name, command);
                 }
             } catch (error) {
                 logger.error(`Failed to load command at ${fullPath}:`, error);
@@ -116,16 +122,27 @@ async function bootstrap() {
     try {
         logger.info('Loading configuration...');
         config = await configManager.load();
-        (client as any).config = config;
+
+        client.config = config;
+        client.services = new ContextServicesMetadata({
+            config,
+            configManager,
+            db,
+            i18n,
+            logger,
+            extensionManager,
+            commandTracker,
+            xpService,
+        });
 
         logger.info(`Using configuration from ${configManager.getPath()}`);
         logger.info(`Default language: ${config.defaultLanguage}`);
 
-        logger.info('Loading commands...');
-        await loadCommands(commandsPath);
-
         logger.info('Running database migrations...');
         await db.runMigrations();
+
+        logger.info('Loading commands...');
+        await loadCommands(commandsPath);
 
         const eventFiles = readdirSync(eventsPath).filter(
             (file) =>
@@ -151,6 +168,7 @@ async function bootstrap() {
             }
         }
 
+        await extensionManager.setupAll();
         await client.login(process.env.DISCORD_TOKEN);
     } catch (error) {
         logger.error('Failed to start the bot:', error);
