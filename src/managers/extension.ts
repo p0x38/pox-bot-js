@@ -1,4 +1,4 @@
-import type { Extension, ExtensionManagerLike } from './types';
+import type { Extension, ExtensionManagerLike } from '@/extensions/types';
 
 export class ExtensionManager implements ExtensionManagerLike {
     readonly #extensions = new Map<string, Extension>();
