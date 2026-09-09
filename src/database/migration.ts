@@ -11,8 +11,8 @@ export async function runMigrations() {
         await client.query('BEGIN');
         const categories = ['tables', 'indexes', 'views'];
         const paths = [
-            path.join(process.cwd(), 'dist/assets/migrations'),
-            path.join(process.cwd(), 'src/assets/migrations'),
+            path.join(process.cwd(), 'dist/database/migrations'),
+            path.join(process.cwd(), 'src/database/migrations'),
         ];
         let baseDir = '';
         for (const p of paths) {
