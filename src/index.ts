@@ -41,6 +41,7 @@ const shutdown = async (signal: string, exitCode = 0) => {
 
     try {
         await extensionManager.teardownAll();
+        client.destroy();
         await lock.release();
         await db.pool.end();
 
