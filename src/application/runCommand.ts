@@ -3,25 +3,18 @@ import { Message } from 'discord.js';
 import { Command, RawContext } from '@/commands/types';
 import { Context, resolveLocale } from '@/contexts/Context';
 import { ContextMetadata } from '@/contexts/ContextMetadata';
-import { ContextServicesMetadata } from '@/contexts/ContextServicesMetadata';
+import {
+    ContextServicesMetadata,
+    type ContextServicesMetadataOptions,
+} from '@/contexts/ContextServicesMetadata';
 import { ErrorHandler } from '@/errors/handler';
 import { createT } from '@/i18n/fluent/createT';
 import { commandPipeline } from '@/middlewares/index';
 
-export interface CommandRuntimeServices
-    extends Omit<
-        ConstructorParameters<typeof ContextServicesMetadata>[0],
-        'commandTracker'
-    > {
-    commandTracker: ConstructorParameters<
-        typeof ContextServicesMetadata
-    >[0]['commandTracker'];
-}
-
 export default async function (
     rawContext: RawContext,
     command: Command,
-    services: CommandRuntimeServices,
+    services: ContextServicesMetadataOptions,
 ) {
     const userId =
         rawContext instanceof Message
