@@ -10,6 +10,15 @@ export interface DecoratedCommandConstructor {
     new (...args: never[]): object;
 }
 
+interface DecoratedCommandInstance {
+    [key: string | symbol]: unknown;
+}
+
+interface DecoratedCommandConstructorWithMetadata
+    extends DecoratedCommandConstructor {
+    [Symbol.metadata]?: Record<PropertyKey, unknown>;
+}
+
 export interface CommandExtension extends Extension {
     readonly name: 'commands';
     readonly commands: readonly Command[];
@@ -23,9 +32,7 @@ export function createCommandExtension(
 
     for (const CommandClass of classes) {
         const metadata = getCommandMetadata(
-            (CommandClass as typeof CommandClass & { [Symbol.metadata]?: object })[
-                Symbol.metadata
-            ] as Record<PropertyKey, unknown> | undefined ?? {},
+            CommandClass as DecoratedCommandConstructorWithMetadata,
         );
 
         if (!metadata) {
@@ -35,9 +42,7 @@ export function createCommandExtension(
         }
 
         const methodMetadata = getCommandMethodMetadata(
-            (CommandClass as typeof CommandClass & { [Symbol.metadata]?: object })[
-                Symbol.metadata
-            ] as Record<PropertyKey, unknown> | undefined ?? {},
+            CommandClass as DecoratedCommandConstructorWithMetadata,
         );
 
         if (!methodMetadata?.execute) {
@@ -46,8 +51,8 @@ export function createCommandExtension(
             );
         }
 
-        const instance = new CommandClass();
-        const execute = instance[methodMetadata.execute as keyof typeof instance];
+        const instance = new CommandClass() as DecoratedCommandInstance;
+        const execute = instance[methodMetadata.execute];
 
         if (typeof execute !== 'function') {
             throw new TypeError(
