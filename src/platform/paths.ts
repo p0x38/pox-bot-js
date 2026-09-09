@@ -31,17 +31,16 @@ export function getPlatformPaths(appName: string): PlatformPaths {
 
     switch (platform()) {
         case 'win32': {
-            const appData =
-                process.env.APPDATA ?? join(home, 'AppData', 'Roaming');
             const localAppData =
                 process.env.LOCALAPPDATA ?? join(home, 'AppData', 'Local');
+            const applicationData = join(localAppData, appName);
 
             return {
-                data: join(localAppData, appName),
-                config: join(appData, appName),
-                cache: join(localAppData, appName, 'cache'),
-                logs: join(localAppData, appName, 'logs'),
-                runtime: join(localAppData, appName, 'runtime'),
+                data: applicationData,
+                config: applicationData,
+                cache: join(applicationData, 'cache'),
+                logs: join(applicationData, 'logs'),
+                runtime: join(applicationData, 'runtime'),
                 temp: join(temp, appName),
             };
         }
