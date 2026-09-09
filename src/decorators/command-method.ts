@@ -1,7 +1,7 @@
-import { setCommandMethodMetadata } from './metadata';
+import { addCommandMethodMetadata } from './metadata';
 
 export function commandMethod(
-    metadata: Parameters<typeof setCommandMethodMetadata>[1],
+    metadata: Parameters<typeof addCommandMethodMetadata>[1],
 ) {
     return function <This, Args extends unknown[], Return>(
         target: (this: This, ...args: Args) => Return,
@@ -14,7 +14,10 @@ export function commandMethod(
             throw new TypeError('@commandMethod cannot decorate a static method');
         }
 
-        setCommandMethodMetadata(context.metadata as Record<PropertyKey, unknown>, metadata);
+        addCommandMethodMetadata(context.metadata as Record<PropertyKey, unknown>, {
+            ...metadata,
+            method: context.name,
+        });
         return target;
     };
 }
