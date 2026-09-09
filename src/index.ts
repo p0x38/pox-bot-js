@@ -4,6 +4,7 @@ import path from 'node:path';
 import { Client, GatewayIntentBits, Collection } from 'discord.js';
 
 import { Command } from '@/commands/types';
+import { ConfigManager, type Config } from '@/config';
 import { db } from '@/database';
 import i18n from '@/i18n';
 import 'dotenv/config';
@@ -12,6 +13,7 @@ import { logger } from '@/logger';
 import { InstanceLock } from './application/InstanceLock';
 
 const lock = new InstanceLock();
+const configManager = new ConfigManager();
 
 try {
     await lock.acquire();
@@ -21,6 +23,7 @@ try {
 }
 
 let shuttingDown = false;
+let config: Config;
 
 const shutdown = async (signal: string, exitCode = 0) => {
     if (shuttingDown) {
@@ -76,6 +79,7 @@ const commands = new Collection<string, Command>();
 
 (client as any).commands = commands;
 (client as any).i18n = i18n;
+(client as any).configManager = configManager;
 
 const commandsPath = path.join(import.meta.dirname, 'commands');
 const eventsPath = path.join(import.meta.dirname, 'events');
@@ -110,6 +114,13 @@ async function loadCommands(dir: string) {
 
 async function bootstrap() {
     try {
+        logger.info('Loading configuration...');
+        config = await configManager.load();
+        (client as any).config = config;
+
+        logger.info(`Using configuration from ${configManager.getPath()}`);
+        logger.info(`Default language: ${config.defaultLanguage}`);
+
         logger.info('Loading commands...');
         await loadCommands(commandsPath);
 
