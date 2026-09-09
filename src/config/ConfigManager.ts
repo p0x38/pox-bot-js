@@ -9,10 +9,12 @@ export interface Config {
     ownerId: string;
 }
 
+export const DEFAULT_APP_NAME = 'p0x38/pox-bot-js';
+
 export class ConfigManager {
     private readonly path: string;
 
-    public constructor(appName = 'pox-bot') {
+    public constructor(appName = DEFAULT_APP_NAME) {
         const paths = getPlatformPaths(appName);
 
         this.path = join(paths.config, 'config.json');
