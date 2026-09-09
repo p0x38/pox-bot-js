@@ -1,23 +1,19 @@
 import { Message } from 'discord.js';
 
 import { ArgumentDefinition, type InferArgs } from '@/commands/types';
-import config from '@/config.json';
 import type { Context } from '@/contexts/Context';
 import { getConvertedValue } from '@/converters';
-import { db } from '@/database';
 import { MissingRequiredArgument } from '@/errors/index';
-import i18n from '@/i18n';
 
 export class ArgumentParser {
     static async getContextualT(context: Context) {
-        const userId =
-            context instanceof Message ? context.author.id : context.user.id;
+        const userId = context.user.id;
+        const userData = await context.services.db.getUserSettings(userId);
+        const lang = userData.language || context.config.defaultLanguage;
 
-        const userData = await db.getUserSettings(userId);
-        const lang = userData.language || config.defaultLanguage;
-
-        return i18n.getFixedT(lang);
+        return context.services.i18n.getFixedT(lang);
     }
+
     static async parse<T extends readonly ArgumentDefinition[]>(
         ctx: Context,
         defs: T,
