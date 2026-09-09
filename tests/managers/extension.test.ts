@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { ExtensionManager } from '@/extensions/manager';
+import { ExtensionManager } from '@/managers/extension';
 import type { Extension } from '@/extensions/types';
 
 test('registers and retrieves extensions', () => {
