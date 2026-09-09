@@ -2,18 +2,14 @@ import { constants } from 'node:fs';
 import { mkdir, open, unlink } from 'node:fs/promises';
 import path from 'node:path';
 
-import { getPlatformPaths } from '@/platform';
-
-const APP_NAME = 'pox-bot';
+import { applicationPaths } from '@/platform';
 
 export class InstanceLock {
     private readonly lockPath: string;
     private handle: Awaited<ReturnType<typeof open>> | null = null;
 
     public constructor() {
-        const paths = getPlatformPaths(APP_NAME);
-
-        this.lockPath = path.join(paths.runtime, 'pox-bot.lock');
+        this.lockPath = path.join(applicationPaths.runtime, 'pox-bot.lock');
     }
 
     public async acquire(): Promise<void> {
@@ -63,8 +59,6 @@ export class InstanceLock {
             ) {
                 throw error;
             }
-
-            throw error;
         }
     }
 }
